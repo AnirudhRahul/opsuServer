@@ -1,13 +1,7 @@
 require('dotenv').config();
-const http = require('http');
-const hostname = process.env.IP_ADRESS;
-const port = 3000;
-const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Test 2 Hello World\n');
-  res.end('')
-});
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+var express = require('express');
+port = process.env.PORT || 3000;
+app = express();
+app.listen(port);
+
+console.log('server started on: ' + port);
