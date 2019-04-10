@@ -2,17 +2,17 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  email: String,
+  email: {type: String, index: true, unique: true, required: true}
   password: String,
-  displayName: String
+  displayName: {type: String, index: true, unique: true, required: true}
 });
 
-const beatmapSchema = new Schema({
-  displayName: String,
-  score: String,
-  ...
-  email: String
-});
+//TODO make proper beatmap Schema
+// const beatmapSchema = new Schema({
+//   displayName: String,
+//   score: String,
+//   email: String
+// });
 
 module.exports = mongoose.model('User', userSchema);
-module.exports = mongoose.model('Beatmap', beatmapSchema);
+// module.exports = mongoose.model('Beatmap', beatmapSchema);
