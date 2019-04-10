@@ -9,27 +9,21 @@ exports.add_user = function(req, res) {
       email=req.body.email,
       password=req.body.password
   });
-  newUser.save({}, function(err, task) {
+  newUser.save({}, function(err, user) {
     if (err)
       res.send(err);
     else
-      res.json(task);
+      res.json(user);
   });
 };
 
 exports.get_user = function(req, res) {
-  var userToFind = new User({
-      email=req.query.email,
-      password=req.query.password
+
+  User.findOne({ email: req.query.email, password: req.query.password }, function (err, user) {
+    if(err)
+      res.send(error)
+    else
+      res.json(user);
   });
 
-  User.find({}, function(error, documents){
-
-  });
-
-  newUser.save({}, function(err, task) {
-    if (err)
-      res.send(err);
-    res.json(task);
-  });
 };
