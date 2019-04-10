@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').load();
 var express = require('express');
 app = express();
 app.listen(process.env.PORT);
