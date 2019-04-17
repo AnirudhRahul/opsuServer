@@ -2,7 +2,7 @@ module.exports = function(app) {
   var userController = require('../controllers/userController.js');
   var beatmapController = require('../controllers/beatmapController.js');
 
-  app.route('/users/')
+  app.route('/users')
     // login route
     .get(userController.get_user)
     // sign up route
@@ -11,7 +11,7 @@ module.exports = function(app) {
   // app.route('/recover/:secretKey')
   //   // forgot password route
   //   .put(userController.add_user);
-  //
+
   // // retrieve leaderboard route
   // app.route('/beatmaps/:beatmapId/:name?')
   //   // get Beatmap scores
