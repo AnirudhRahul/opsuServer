@@ -3,6 +3,9 @@ module.exports = (function() {
 
     var users = require('express').Router();
     var mongoose = require('mongoose'),
+    var bodyParser = require('body-parser')
+    var jsonParser = bodyParser.json()
+
     User = mongoose.model('User');
     //TODO implement api responeses
 
@@ -17,7 +20,7 @@ module.exports = (function() {
     });
 
 
-     users.put('/', function (req, res) {
+     users.put('/', jsonParser, function (req, res) {
        res.send("add_user route is working");
        var newUser = new User({
            displayName=req.body.displayName,
