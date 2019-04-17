@@ -2,7 +2,7 @@ module.exports = (function() {
     'use strict';
 
     var users = require('express').Router();
-    var mongoose = require('mongoose'),
+    var mongoose = require('mongoose');
     var bodyParser = require('body-parser')
     var jsonParser = bodyParser.json()
 
