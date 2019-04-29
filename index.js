@@ -1,6 +1,6 @@
 require('dotenv').config();
 const bodyParser = require('body-parser');
-const routes = require('../routes.js');
+const routes = require('./routes.js');
 
 app = express();
 app.use(bodyParser.json());
