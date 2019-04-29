@@ -1,10 +1,16 @@
 require('dotenv').config();
-var express = require('express');
+const bodyParser = require('body-parser');
+const routes = require('../routes.js');
+
 app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get('/', function (req, res) {
+  res.send('Server is running');
+})
+app.use('/test', routes)
+
 port = process.env.PORT;
-
-var usersRoute = require('./routes/users');
-app.use('/users', usersRoute);
-
 app.listen(port);
 console.log('server started on: ' + port);
