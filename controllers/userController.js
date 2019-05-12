@@ -6,6 +6,7 @@ User = mongoose.model('User');
 exports.get_user = function(req, res) {
   res.send("get_user route is working");
   User.findOne({ email: req.query.email, password: req.query.password }, function (err, user) {
+    res.send("Finding new user");
     if(err)
       res.send(err);
     else
@@ -22,6 +23,8 @@ exports.add_user = function(req, res) {
       password: req.body.password
   });
   newUser.save({}, function(err, user) {
+    res.send("Saving new user");
+
     if (err)
       res.send(err);
     else
