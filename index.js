@@ -2,10 +2,12 @@ require('dotenv').config();
 
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/opsu_Users', {useNewUrlParser: true});
-
-const bodyParser = require('body-parser');
 const models = require('./models/User.js');
+
+const express = require('express');
+const bodyParser = require('body-parser');
 const routes = require('./routes.js');
+
 
 app = express();
 app.use(bodyParser.json());
