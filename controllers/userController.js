@@ -17,9 +17,9 @@ exports.get_user = function(req, res) {
 exports.add_user = function(req, res) {
   res.send("add_user route is working");
   var newUser = new User({
-      displayName=req.body.displayName,
-      email=req.body.email,
-      password=req.body.password
+      displayName: req.body.displayName,
+      email: req.body.email,
+      password: req.body.password
   });
   newUser.save({}, function(err, user) {
     if (err)
