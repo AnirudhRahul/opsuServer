@@ -4,9 +4,9 @@ User = mongoose.model('User');
 //TODO implement api responeses
 
 exports.get_user = function(req, res) {
-  res.send("get_user route is working");
+  console.log("get_user route is working");
   User.findOne({ email: req.query.email, password: req.query.password }, function (err, user) {
-    res.send("Finding new user");
+    console.log("Finding new user");
     if(err)
       res.send(err);
     else
@@ -16,15 +16,14 @@ exports.get_user = function(req, res) {
 };
 
 exports.add_user = function(req, res) {
-  res.send("add_user route is working");
+  console.log("add_user route is working");
   var newUser = new User({
       displayName: req.body.displayName,
       email: req.body.email,
       password: req.body.password
   });
   newUser.save({}, function(err, user) {
-    res.send("Saving new user");
-
+    console.log("Saving new user");
     if (err)
       res.send(err);
     else
