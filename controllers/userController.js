@@ -16,8 +16,10 @@ exports.get_user = function(req, res) {
 };
 
 exports.add_user = function(req, res) {
-  if(!(req.body.displayName&&req.body.email&&req.body.password))
+  if(!(req.body.displayName&&req.body.email&&req.body.password)){
     res.status(406).send("Missing input fields");
+    return;
+  }
 
   var newUser = new User({
       displayName: req.body.displayName,
