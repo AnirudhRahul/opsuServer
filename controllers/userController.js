@@ -26,12 +26,9 @@ exports.add_user = function(req, res) {
   });
 
   newUser.save({}, function(err, user) {
-      if(err.errors.code)
-      switch(err.errors.code){
-        case 11000:
-          res.state(409);break;
-        default:
-          res.state(400);
+    if(err){
+      if(err.code==11000)
+        res.status(409);
       res.send(err);
     }
     else
