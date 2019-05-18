@@ -9,8 +9,10 @@ exports.get_user = function(req, res) {
     console.log("Finding new user");
     if(err)
       res.send(err);
-    else
+    else{
+      user.password=null;
       res.json(user);
+    }
   });
 
 };
