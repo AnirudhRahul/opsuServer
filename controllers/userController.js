@@ -16,6 +16,18 @@ exports.get_user = function(req, res) {
 
 };
 
+exports.get_friendRequests = function(req, res) {
+
+  User.findOne({ displayName: req.query.displayName}, function (err, user) {
+    console.log("Finding new user");
+    if(err)
+      res.status(400).send(err);
+    else
+      res.send(user.friend_requests);
+  });
+
+};
+
 exports.get_friends = function(req, res) {
 
   User.findOne({ displayName: req.query.displayName}, function (err, user) {
