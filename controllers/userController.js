@@ -3,77 +3,87 @@ User = mongoose.model('User');
 
 //TODO implement api responeses
 
+//GET methods
 exports.get_user = function(req, res) {
-  console.log("get_user route is working");
+
   User.findOne({ email: req.query.email, password: req.query.password }, function (err, user) {
     console.log("Finding new user");
     if(err)
       res.status(400).send(err);
     else
-      res.json(user);
-
+      res.send(user);
   });
 
 };
 
-// exports.dailyCheck = function(req, res) {
-//   console.log("get_user route is working");
-//   User.findOne({ email: req.query.email, password: req.query.password }, function (err, user) {
-//     console.log("Finding new user");
-//     if(err)
-//       res.send(err);
-//     else{
-//       user.password=null;
-//       res.json(user);
-//     }
-//   });
-//
-// };
-//
-exports.friendRequest = function(req, res) {
-  const friendName = req.query.friendName;
-  const self = req.query.displayName;
-  User.findOne({ displayName: self}, function (err, friend) {
-    if(err){
+exports.get_friends = function(req, res) {
+
+  User.findOne({ displayName: req.query.displayName}, function (err, user) {
+    console.log("Finding new user");
+    if(err)
       res.status(400).send(err);
-    }
-    else{
-      if(friend.friends.contains(self))
-        res.status(403).send("Already your friend");
-      else if(friend.friend_requests.contains(self))
-        res.status(403).send("Already sent friend request");
-      else{
-        friend.friend_requests.push(self);
-        // User.findOneAndUpdate(friend._id, {"$push": { "friend_requests": self } })
-        res.send("Friend Request Sent")
-      }
-    }
+    else
+      res.send(user.friends);
   });
 
 };
 
-exports.acceptRequest = function(req, res) {
+exports.create_request = function(req, res) {
   const friendName = req.query.friendName;
   const self = req.query.displayName;
-  
-  User.findOne({ displayName: self}, function (err, user) {
-    if(err){
-      res.status(400).send(err);
-    }
-    else{
-      if(user.friends.contains(friendName))
-        res.status(403).send("Already your friend");
-      else if(!user.friend_requests.contains(friendName))
-        res.status(403).send("Invalid friend request");
-      else{
-        user.friend_requests.splice(user.friend_requests.indexOf(friendName), 1);
-        user.friends.push(friendName);
-        User.findOneAndUpdate({displayName: friendName}, {"$push": { "friends": self } });
-        res.send("Friend Request Accepted");
-      }
 
-    }
-  });
+  User.findOneAndUpdate(
+    {displayName : friendName},
+    {$addToSet : {friend_requests: self}},
+    function(err, doc) {
+        if(err)
+          res.status(400).send(err);
+        else
+          res.send("Friend Request sent");
+    });
+
+};
+
+exports.delete_request = function(req, res) {
+  const friendName = req.query.friendName;
+  const self = req.query.displayName;
+  const accept = req.query.accept;
+
+  if(accept){
+    var worked = true;
+    //Add eachother to friends lists
+    User.findOneAndUpdate(
+      {displayName : self},
+      {$addToSet : {friends: friend}},
+      function(err, doc) {
+          if(err)
+            worked=false;
+      });
+    User.findOneAndUpdate(
+      {displayName : friend},
+      {$addToSet : {friends: self}},
+      function(err, doc) {
+          if(err)
+            worked=false;
+      });
+    //Send response
+    if(worked)
+      res.send("Friend Request accepted");
+    else
+      res.status(400).send("Friend Request failed");
+  }
+  else{
+    User.findOneAndUpdate(
+      {displayName : self},
+      {$pull : {friend_requests: friend}},
+      function(err, doc) {
+          if(err)
+            res.status(400).send(err);
+          else
+            res.send("Friend Request deleted");
+      });
+
+  }
 
 };
 
