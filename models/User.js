@@ -4,7 +4,6 @@ const schema = new mongoose.Schema({
   email: {type: String, index: true, unique: true, required: true},
   password: {type: String, required: true},
   displayName: {type: String, index: true, unique: true, required: true},
-  accuracy: {type: Decimal128, default:0},
   score: {type: Number, default:0},
   playsTotal: {type: Number, default:0},
   icons: {type: [Number]},
