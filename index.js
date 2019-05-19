@@ -6,7 +6,6 @@ const models = require('./models/User.js');
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const routes = require('./routes.js');
 
 
 app = express();
@@ -17,6 +16,7 @@ app.get('/', function (req, res) {
   res.send('Server is running');
 })
 
+const routes = require('./routes.js');
 app.use('/test', routes);
 
 port = process.env.PORT;
