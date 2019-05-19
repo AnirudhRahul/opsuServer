@@ -11,11 +11,40 @@ exports.get_user = function(req, res) {
       res.send(err);
     else{
       user.password=null;
-      res.json(user);
+      res.json(user.username);
     }
   });
 
 };
+
+// exports.dailyCheck = function(req, res) {
+//   console.log("get_user route is working");
+//   User.findOne({ email: req.query.email, password: req.query.password }, function (err, user) {
+//     console.log("Finding new user");
+//     if(err)
+//       res.send(err);
+//     else{
+//       user.password=null;
+//       res.json(user);
+//     }
+//   });
+//
+// };
+//
+// exports.addFriend = function(req, res) {
+//   console.log("get_user route is working");
+//   User.findOne({ email: req.query.email, password: req.query.password }, function (err, user) {
+//     console.log("Finding new user");
+//     if(err)
+//       res.send(err);
+//     else{
+//       user.password=null;
+//       res.json(user);
+//     }
+//   });
+//
+// };
+
 
 exports.add_user = function(req, res) {
   if(!(req.body.displayName&&req.body.email&&req.body.password)){
