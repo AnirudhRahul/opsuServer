@@ -61,21 +61,37 @@ exports.delete_request = function(req, res) {
   const accept = req.query.accept;
   var worked = true;
   if(accept){
+    var withinLimit=true;
     //Add eachother to friends lists
     User.findOneAndUpdate(
       {displayName : self},
       {$addToSet : {friends: friendName}},
       function(err, doc) {
           if(err)
-            worked=false;
+            worked = false;
+          if(doc.friend_requests.length >= doc.maxFriend)
+            withinLimit = false;
       });
     User.findOneAndUpdate(
       {displayName : friendName},
       {$addToSet : {friends: self}},
       function(err, doc) {
         if(err)
-          worked=false;
+          worked = false;
+        if(doc.friend_requests.length >= doc.maxFriend)
+          withinLimit = false;
       });
+    }
+    if(!withinLimit){
+      //Remove friends since limit was Reached
+      User.findOneAndUpdate(
+        {displayName : self},
+        {$pull : {friends: friendName}});
+      User.findOneAndUpdate(
+        {displayName : self},
+        {$pull : {friends: friendName}});
+        res.status(403).send("Friend Limit Reached");
+        return;
     }
 
     //Delete friend request
@@ -84,7 +100,7 @@ exports.delete_request = function(req, res) {
       {$pull : {friend_requests: friendName}},
       function(err, doc) {
         if(err)
-          worked=false;
+          worked = false;
       });
 
     //Send response
