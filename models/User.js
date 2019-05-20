@@ -15,6 +15,13 @@ const schema = new mongoose.Schema({
   consecutive: {type: Number},
   lastLogin: {type: Number}
 });
+schema.pre('validate', function(next) {
+    if (this.friends.length > this.maxFriend) {
+        next(new Error('Friend limit exceeded'));
+    } else {
+        next();
+    }
+});
 
 //Registers the model with mongoose and exports it
 module.exports = mongoose.model('User', schema);
