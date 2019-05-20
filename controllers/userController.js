@@ -68,13 +68,13 @@ exports.delete_request = function(req, res) {
     //Add eachother to friends lists
     User.findOneAndUpdate(
       {displayName : self},
-      {$addToSet : {friends: friend}},
+      {$addToSet : {friends: friendName}},
       function(err, doc) {
           if(err)
             worked=false;
       });
     User.findOneAndUpdate(
-      {displayName : friend},
+      {displayName : friendName},
       {$addToSet : {friends: self}},
       function(err, doc) {
           if(err)
@@ -83,7 +83,7 @@ exports.delete_request = function(req, res) {
     }
     User.findOneAndUpdate(
       {displayName : self},
-      {$pull : {friend_requests: friend}},
+      {$pull : {friend_requests: friendName}},
       function(err, doc) {
           if(err)
             worked=false;
