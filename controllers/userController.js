@@ -51,7 +51,7 @@ exports.create_request = function(req, res) {
         if(err)
           res.status(400).send(err);
         else
-          res.send("Friend Request sent");
+          res.send("Friend Request sent "+doc);
     });
 
 };
