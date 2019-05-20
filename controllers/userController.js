@@ -63,7 +63,6 @@ exports.delete_request = function(req, res) {
   const self = req.query.displayName;
   const accept = req.query.accept;
 
-  var error;
   if(accept){
     var worked = true;
     //Add eachother to friends lists
@@ -72,7 +71,7 @@ exports.delete_request = function(req, res) {
       {$addToSet : {friends: friendName}},
       function(err, doc) {
           if(err){
-            error+=err;
+            console.log(err);
             worked=false;
           }
       });
@@ -81,21 +80,22 @@ exports.delete_request = function(req, res) {
       {$addToSet : {friends: self}},
       function(err, doc) {
         if(err){
-          error+=err;
+          console.log(err);
           worked=false;
         }
       });
     }
+
+    //Delete friend request
     User.findOneAndUpdate(
       {displayName : self},
       {$pull : {friend_requests: friendName}},
       function(err, doc) {
         if(err){
-          error+=err;
+          console.log(err);
           worked=false;
         }
       });
-
 
     //Send response
     if(worked&&accept)
@@ -104,9 +104,6 @@ exports.delete_request = function(req, res) {
       res.send("Friend Request deleted");
     else
       res.status(400).send("Friend Request failed "+error);
-
-
-
 };
 
 
