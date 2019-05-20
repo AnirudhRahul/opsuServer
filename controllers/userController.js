@@ -7,7 +7,6 @@ User = mongoose.model('User');
 exports.get_user = function(req, res) {
 
   User.findOne({ email: req.query.email, password: req.query.password }, function (err, user) {
-    console.log("Finding new user");
     if(err)
       res.status(400).send(err);
     else
@@ -19,7 +18,6 @@ exports.get_user = function(req, res) {
 exports.get_friendRequests = function(req, res) {
 
   User.findOne({ displayName: req.query.displayName}, function (err, user) {
-    console.log("Finding new user");
     if(err)
       res.status(400).send(err);
     else
@@ -31,7 +29,6 @@ exports.get_friendRequests = function(req, res) {
 exports.get_friends = function(req, res) {
 
   User.findOne({ displayName: req.query.displayName}, function (err, user) {
-    console.log("Finding new user");
     if(err)
       res.status(400).send(err);
     else
@@ -62,27 +59,22 @@ exports.delete_request = function(req, res) {
   const friendName = req.query.friendName;
   const self = req.query.displayName;
   const accept = req.query.accept;
-
+  var worked = true;
   if(accept){
-    var worked = true;
     //Add eachother to friends lists
     User.findOneAndUpdate(
       {displayName : self},
       {$addToSet : {friends: friendName}},
       function(err, doc) {
-          if(err){
-            console.log(err);
+          if(err)
             worked=false;
-          }
       });
     User.findOneAndUpdate(
       {displayName : friendName},
       {$addToSet : {friends: self}},
       function(err, doc) {
-        if(err){
-          console.log(err);
+        if(err)
           worked=false;
-        }
       });
     }
 
@@ -91,10 +83,8 @@ exports.delete_request = function(req, res) {
       {displayName : self},
       {$pull : {friend_requests: friendName}},
       function(err, doc) {
-        if(err){
-          console.log(err);
+        if(err)
           worked=false;
-        }
       });
 
     //Send response
@@ -103,7 +93,7 @@ exports.delete_request = function(req, res) {
     else if(worked&&!accept)
       res.send("Friend Request deleted");
     else
-      res.status(400).send("Friend Request failed "+error);
+      res.status(400).send("Friend Request failed ");
 };
 
 
