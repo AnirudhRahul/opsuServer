@@ -69,8 +69,10 @@ exports.delete_request = function(req, res) {
       function(err, doc) {
           if(err)
             worked = false;
+          console.log(doc.friend_requests.length +" "+doc.maxFriend);
           if(doc.friend_requests.length >= doc.maxFriend)
             withinLimit = false;
+
       });
     User.findOneAndUpdate(
       {displayName : friendName},
@@ -78,10 +80,12 @@ exports.delete_request = function(req, res) {
       function(err, doc) {
         if(err)
           worked = false;
+        console.log(doc.friend_requests.length +" "+doc.maxFriend);
         if(doc.friend_requests.length >= doc.maxFriend)
           withinLimit = false;
       });
     }
+    console.log(withinLimit);
     if(!withinLimit){
       //Remove friends since limit was Reached
       User.findOneAndUpdate(
