@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
-  email: {type: String, index: true, unique: true, required: true},
+  email: {type: String, required: true},
   password: {type: String, required: true},
   displayName: {type: String, index: true, unique: true, required: true},
   score: {type: Number, default:0},
