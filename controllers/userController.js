@@ -144,6 +144,8 @@ exports.delete_request = function(req, res) {
     res.send("Friend Request deleted");
   else
     res.status(400).send("Friend Request failed ");
+
+  //Todo add possibility for friendship badge here
 };
 
 
