@@ -162,11 +162,9 @@ exports.add_user = function(req, res) {
   });
 
   newUser.save({}, function(err, user) {
-    if (err) {
-      if (err.code == 11000)
-        res.status(403);
-      res.send(err);
-    } else
+    if (err)
+      res.status(400).send(err);
+    else
       res.send(user);
   });
 };
