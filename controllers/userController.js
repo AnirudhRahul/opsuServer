@@ -1,5 +1,5 @@
 var mongoose = require('mongoose'),
-  User = mongoose.model('User');
+User = mongoose.model('User');
 
 //TODO implement api responeses
 
@@ -69,11 +69,10 @@ exports.create_request = function(req, res) {
 exports.delete_request = function(req, res) {
   const friendName = req.query.friendName;
   const self = req.query.displayName;
-  const accept = req.query.accept;
+  const accept = req.query.accept=='true';
   var worked = true;
+  var withinLimit = true;
   if (accept) {
-    var self_withinLimit = true;
-    var friend_withinLimit = true;
     //Add eachother to friends lists
     User.findOneAndUpdate({
         displayName: self
@@ -85,8 +84,10 @@ exports.delete_request = function(req, res) {
       function(err, doc) {
         if (err)
           worked = false;
-        if (doc.friends.length >= doc.maxFriend)
-          self_withinLimit = false;
+        if (doc.friends.length >= doc.maxFriend){
+          withinLimit = false;
+          res.write("Your friend limit has been reached.")
+        }
 
       });
     User.findOneAndUpdate({
@@ -99,11 +100,14 @@ exports.delete_request = function(req, res) {
       function(err, doc) {
         if (err)
           worked = false;
-        if (doc.friends.length >= doc.maxFriend)
-          friend_withinLimit = false;
+        if (doc.friends.length >= doc.maxFriend){
+          withinLimit = false;
+          res.write("Friend's friend limit has been reached.")
+        }
       });
+      withinLimit = self_withinLimit && friend_withinLimit
   }
-  console.log(withinLimit);
+
   if (!withinLimit) {
     //Remove friends since limit was Reached
     User.findOneAndUpdate({
@@ -150,10 +154,6 @@ exports.delete_request = function(req, res) {
 
 
 exports.add_user = function(req, res) {
-  if (!(req.body.displayName && req.body.email && req.body.password)) {
-    res.status(406).send("Missing input fields");
-    return;
-  }
 
   var newUser = new User({
     displayName: req.body.displayName,
