@@ -1,5 +1,5 @@
 var mongoose = require('mongoose'),
-User = mongoose.model('User');
+  User = mongoose.model('User');
 
 //TODO implement api responeses
 
@@ -19,14 +19,13 @@ exports.get_user = function(req, res) {
 };
 
 exports.get_friendRequests = function(req, res) {
-
   User.findOne({
     displayName: req.query.displayName
-  }, function(err, user) {
+  }, 'friend_requests', function(err, user) {
     if (err)
       res.status(400).send(err);
     else
-      res.send(user.friend_requests);
+      res.send(user);
   });
 
 };
@@ -35,11 +34,11 @@ exports.get_friends = function(req, res) {
 
   User.findOne({
     displayName: req.query.displayName
-  }, function(err, user) {
+  }, 'friends', function(err, user) {
     if (err)
       res.status(400).send(err);
     else
-      res.send(user.friends);
+      res.send(user);
   });
 
 };
@@ -66,66 +65,52 @@ exports.create_request = function(req, res) {
 
 };
 
+function addFriend(self, friend) {
+  //Add eachother to friends lists
+  User.findOneAndUpdate({
+      displayName: self
+    }, {
+      $addToSet: {
+        friends: friend
+      }
+    },
+    function(err, doc) {
+        if(err){
+          res.write(err);
+          worked=false;
+        }
+    });
+}
+
+function friendLimitReached(self, callback) {
+  //Add eachother to friends lists
+  User.findOne({
+    displayName: self
+  },function(err, user) {
+    if (err){
+      res.write(err);
+      worked=false;
+    }
+    else if(user.friends.length<user.maxFriend)
+      callback();
+  });
+}
+
+
 exports.delete_request = function(req, res) {
   const friendName = req.query.friendName;
   const self = req.query.displayName;
-  const accept = req.query.accept=='true';
+  const accept = req.query.accept == 'true';
   var worked = true;
-  var withinLimit = true;
   if (accept) {
-    //Add eachother to friends lists
-    User.findOneAndUpdate({
-        displayName: self
-      }, {
-        $addToSet: {
-          friends: friendName
-        }
-      },
-      function(err, doc) {
-        if (err)
-          worked = false;
-        if (doc.friends.length >= doc.maxFriend){
-          withinLimit = false;
-          res.write("Your friend limit has been reached.")
-        }
-
-      });
-    User.findOneAndUpdate({
-        displayName: friendName
-      }, {
-        $addToSet: {
-          friends: self
-        }
-      },
-      function(err, doc) {
-        if (err)
-          worked = false;
-        if (doc.friends.length >= doc.maxFriend){
-          withinLimit = false;
-          res.write("Friend's friend limit has been reached.")
-        }
-      });
-      withinLimit = self_withinLimit && friend_withinLimit
-  }
-
-  if (!withinLimit) {
-    //Remove friends since limit was Reached
-    User.findOneAndUpdate({
-      displayName: self
-    }, {
-      $pull: {
-        friends: friendName
-      }
-    });
-    User.findOneAndUpdate({
-      displayName: self
-    }, {
-      $pull: {
-        friends: friendName
-      }
-    });
-    res.status(403).send("Friend Limit Reached");
-    return;
+    friendLimitReached(self, friendLimitReached(friendName,function() {
+         addFriend(self,friendName);
+         addFriend(friendName,self);
+    }));
+    if(!worked){
+      res.status(400).end();
+      return;
+    }
   }
 
   //Delete friend request
@@ -137,17 +122,14 @@ exports.delete_request = function(req, res) {
       }
     },
     function(err, doc) {
-      if (err)
-        worked = false;
     });
 
   //Send response
-  if (worked && accept)
+  if (accept)
     res.send("Friend Request accepted");
-  else if (worked && !accept)
-    res.send("Friend Request deleted");
   else
-    res.status(400).send("Friend Request failed ");
+    res.send("Friend Request deleted");
+
 
   //Todo add possibility for friendship badge here
 };
