@@ -1,5 +1,5 @@
 var mongoose = require('mongoose'),
-  User = mongoose.model('User');
+User = require('./models/User.js')
 
 //TODO implement api responeses
 
@@ -7,15 +7,15 @@ var mongoose = require('mongoose'),
 exports.get_user = function(req, res) {
   console.log("called")
   res.send("Get User route working");
-  // User.findOne({
-  //   email: req.query.email,
-  //   password: req.query.password
-  // }, function(err, user) {
-  //   if (err)
-  //     res.status(400).send(err);
-  //   else
-  //     res.send(user);
-  // });
+  User.findOne({
+    email: req.query.email,
+    password: req.query.password
+  }, function(err, user) {
+    if (err)
+      res.status(400).send(err);
+    else
+      res.send(user);
+  });
 
 };
 
