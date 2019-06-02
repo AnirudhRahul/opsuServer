@@ -5,8 +5,6 @@ User = require('./models/User.js')
 
 //GET methods
 exports.get_user = function(req, res) {
-  console.log("called")
-  res.send("Get User route working");
   User.findOne({
     email: req.query.email,
     password: req.query.password
@@ -136,7 +134,6 @@ exports.delete_request = function(req, res) {
 
 
 exports.add_user = function(req, res) {
-  res.write("Add user route is working "+mongoose.connection.readyState);
 
   var newUser = new User({
     displayName: req.body.displayName,
