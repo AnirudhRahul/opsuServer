@@ -130,7 +130,6 @@ exports.delete_request = function(req, res) {
   else
     res.send("Friend Request deleted");
 
-
   //Todo add possibility for friendship badge here
 };
 
