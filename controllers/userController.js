@@ -136,7 +136,7 @@ exports.delete_request = function(req, res) {
 
 
 exports.add_user = function(req, res) {
-  res.send("Add user route is working");
+  res.write("Add user route is working");
 
   var newUser = new User({
     displayName: req.body.displayName,
@@ -146,8 +146,10 @@ exports.add_user = function(req, res) {
 
   newUser.save(function(err, user) {
     if (err)
-      res.status(400).send(err);
+      res.status(400).write(err);
     else
-      res.send(user);
+      res.write(user);
   });
+
+  res.end();
 };
