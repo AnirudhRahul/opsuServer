@@ -1,7 +1,6 @@
 require('dotenv').config();
 
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/opsu_Users', {useNewUrlParser: true});
 const models = require('./models/User.js');
 
 const express = require('express');
