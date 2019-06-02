@@ -5,7 +5,7 @@ var mongoose = require('mongoose'),
 
 //GET methods
 exports.get_user = function(req, res) {
-
+  res.send("Get User route working");
   User.findOne({
     email: req.query.email,
     password: req.query.password
