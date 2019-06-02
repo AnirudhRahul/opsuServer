@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var conn = mongoose.createConnection('mongodb://localhost:27017/opsu_Users', {useNewUrlParser: true});
 
 const schema = new mongoose.Schema({
   email: {type: String, required: true},
@@ -12,16 +13,10 @@ const schema = new mongoose.Schema({
   maxFriend: {type:Number, default:5},
   badges: {type: Map, of: Number},
   supporter: {type: Boolean, default: false},
-  consecutive: {type: Number},
-  lastLogin: {type: Number}
-});
-schema.pre('validate', function(next) {
-    if (this.friends.length > this.maxFriend) {
-        next(new Error('Friend limit exceeded'));
-    } else {
-        next();
-    }
+  consecutive: {type: Number, default: 0},
+  lastLogin: {type: Number, default: 0},
+  coins: {type: Number}
 });
 
 //Registers the model with mongoose and exports it
-module.exports = mongoose.model('User', schema);
+module.exports = conn.model('User', schema);
