@@ -136,7 +136,7 @@ exports.delete_request = function(req, res) {
 
 
 exports.add_user = function(req, res) {
-  res.write("Add user route is working");
+  res.write("Add user route is working "+mongoose.connection.readyState);
 
   var newUser = new User({
     displayName: req.body.displayName,
