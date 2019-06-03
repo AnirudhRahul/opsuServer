@@ -106,11 +106,12 @@ exports.delete_request = function(req, res) {
     friendLimitReached(self, friendLimitReached(friendName,function() {
          addFriend(self,friendName);
          addFriend(friendName,self);
+         if(!worked){
+           res.status(400).end();
+           return;
+         }
     }));
-    if(!worked){
-      res.status(400).end();
-      return;
-    }
+
   }
 
   //Delete friend request
@@ -144,9 +145,9 @@ exports.add_user = function(req, res) {
 
   newUser.save({},function(err, user) {
     if (err)
-      res.status(400).write(err);
+      res.status(400).send(err);
     else
-      res.write(user);
+      res.send(user);
   });
 
 };
