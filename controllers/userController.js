@@ -142,12 +142,11 @@ exports.add_user = function(req, res) {
     password: req.body.password
   });
 
-  newUser.save(function(err, user) {
+  newUser.save({},function(err, user) {
     if (err)
       res.status(400).write(err);
     else
       res.write(user);
   });
 
-  res.end();
 };
