@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
-db = require('./models/User.js');
-User = db.model('User');
+User = require('./models/User.js')
+
 
 //TODO implement api responeses
 
