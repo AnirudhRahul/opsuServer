@@ -19,4 +19,5 @@ const schema = new mongoose.Schema({
 });
 
 //Registers the model with mongoose and exports it
-module.exports = conn.model('User', schema);
+conn.model('User', schema)
+module.exports = conn;
