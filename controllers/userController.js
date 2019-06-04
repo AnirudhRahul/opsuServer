@@ -13,11 +13,11 @@ exports.get_user = function(req, res) {
     if (err)
       res.status(400).send(err);
     else if (user)
-      res.send(user);
+      res.send("User was added\n"+user);
     else
-      res.status(404).send('User not found');
+      res.status(404).send('Username or password incorrect');
 
-
+      console.log("End reached");
   });
 
 };
