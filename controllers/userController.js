@@ -12,8 +12,12 @@ exports.get_user = function(req, res) {
   }, function(err, user) {
     if (err)
       res.status(400).send(err);
-    else
+    else if (user)
       res.send(user);
+    else
+      res.status(404).send('User not found');
+
+
   });
 
 };
@@ -24,8 +28,10 @@ exports.get_friendRequests = function(req, res) {
   }, 'friend_requests', function(err, user) {
     if (err)
       res.status(400).send(err);
-    else
+    else if (user)
       res.send(user);
+    else
+      res.status(404).send('User not found');
   });
 
 };
@@ -37,8 +43,10 @@ exports.get_friends = function(req, res) {
   }, 'friends', function(err, user) {
     if (err)
       res.status(400).send(err);
-    else
+    else if (user)
       res.send(user);
+    else
+      res.status(404).send('User not found');
   });
 
 };
@@ -57,10 +65,11 @@ exports.create_request = function(req, res) {
     function(err, doc) {
       if (err)
         res.status(400).send(err);
-      else if (doc == null)
-        res.status(403).send("Friend name doesn't exist");
-      else
+      else if (doc)
         res.send("Friend Request sent");
+      else
+        res.status(404).send("Friend name doesn't exist");
+
     });
 
 };
@@ -75,10 +84,10 @@ function addFriend(self, friend) {
       }
     },
     function(err, doc) {
-        if(err){
-          res.write(err);
-          worked=false;
-        }
+      if (err) {
+        res.write(err);
+        worked = false;
+      }
     });
 }
 
@@ -86,12 +95,11 @@ function friendLimitReached(self, callback) {
   //Add eachother to friends lists
   User.findOne({
     displayName: self
-  },function(err, user) {
-    if (err){
+  }, function(err, user) {
+    if (err) {
       res.write(err);
-      worked=false;
-    }
-    else if(user.friends.length<user.maxFriend)
+      worked = false;
+    } else if (user.friends.length < user.maxFriend)
       callback();
   });
 }
@@ -103,13 +111,13 @@ exports.delete_request = function(req, res) {
   const accept = req.query.accept == 'true';
   var worked = true;
   if (accept) {
-    friendLimitReached(self, friendLimitReached(friendName,function() {
-         addFriend(self,friendName);
-         addFriend(friendName,self);
-         if(!worked){
-           res.status(400).end();
-           return;
-         }
+    friendLimitReached(self, friendLimitReached(friendName, function() {
+      addFriend(self, friendName);
+      addFriend(friendName, self);
+      if (!worked) {
+        res.status(400).end();
+        return;
+      }
     }));
 
   }
@@ -122,8 +130,7 @@ exports.delete_request = function(req, res) {
         friend_requests: friendName
       }
     },
-    function(err, doc) {
-    });
+    function(err, doc) {});
 
   //Send response
   if (accept)
@@ -143,7 +150,7 @@ exports.add_user = function(req, res) {
     password: req.body.password
   });
 
-  newUser.save({},function(err, user) {
+  newUser.save({}, function(err, user) {
     if (err)
       res.status(400).send(err);
     else
