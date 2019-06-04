@@ -20,8 +20,9 @@ const schema = new mongoose.Schema({
   perfect:    Boolean,
   mods:       Number,
   time:       Number
-
-});
+}
+, {capped: 4*10^10}
+);
 
 //Make all fields required
 for(var i in schema.paths){
