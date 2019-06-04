@@ -7,7 +7,7 @@ User = require('../models/User.js')
 //GET methods
 exports.get_user = function(req, res) {
   User.findOne({
-    email: req.query.email,
+    displayName: req.query.displayName,
     password: req.query.password
   }, function(err, user) {
     if (err)
