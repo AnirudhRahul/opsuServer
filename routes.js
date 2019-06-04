@@ -1,4 +1,5 @@
 const express = require('express')
+const beatmapController = require('./controllers/beatmapController.js')
 const userController = require('./controllers/userController.js')
 const router = express.Router()
 
@@ -16,9 +17,9 @@ router.route('/user/friendRequest')
   .delete(userController.delete_request);
 
 router.route('/leaderboard')
-  .get()
-  .post()
-  
+  .get(beatmapController.get_leaderboard)
+  .post(beatmapController.add_to_leaderboard);
+
 
 
 //TODO make a model for purchasable items
