@@ -17,7 +17,7 @@ exports.get_user = function(req, res) {
     else
       res.status(404).send('Username or password incorrect');
 
-      console.log("End reached");
+    console.log("End reached");
   });
 
 };
@@ -84,28 +84,39 @@ function addFriend(self, friend) {
       }
     },
     function(err, doc) {
-      if (err) {
-        res.write(err);
-        worked = false;
-      }
+
     });
 }
 
-function friendLimitReached(res, self, callback) {
+function friendLimitReached(self, errored, callback) {
+  if (errored) {
+    callback();
+    return;
+  }
   //Add eachother to friends lists
   User.findOne({
     displayName: self
   }, function(err, user) {
-    if (err) {
-      res.write(err);
-      worked = false;
-    }
-    else if(!user){
-      res.write(self+" not found");
-    }
+    if (err)
+      errored = err;
+    else if (!user)
+      errored = 'User not found';
     else if (user.friends.length < user.maxFriend)
-      callback();
+      errored = user.displayName + ' Friend limit reached';
+
+    callback();
   });
+}
+
+function deleteFriendRequest(self, friendName) {}
+User.findOneAndUpdate({
+    displayName: self
+  }, {
+    $pull: {
+      friend_requests: friendName
+    }
+  },
+  function(err, doc) {});
 }
 
 
@@ -115,35 +126,25 @@ exports.delete_request = function(req, res) {
   const accept = req.query.accept == 'true';
   var worked = true;
   if (accept) {
-    friendLimitReached(res, self, friendLimitReached(res,friendName, function() {
-      addFriend(self, friendName);
-      addFriend(friendName, self);
-      if (!worked) {
-        res.status(400).end();
-        return;
+    var errored;
+    friendLimitReached(self, errored, friendLimitReached(friendName, errored, function() {
+      if (errored) {
+        res.status(400).send(errored);
+      } else {
+        addFriend(self, friendName);
+        addFriend(friendName, self);
+        deleteFriendRequest(self, friendName);
+        res.status(200).send("Friend request accepted")
       }
     }));
 
+  } else {
+
+    if (deleteFriendRequest(self, friendName))
+      res.send("An error occurred deleting your friend request");
+    else
+      res.send("Friend Request deleted");
   }
-
-  //Delete friend request
-  User.findOneAndUpdate({
-      displayName: self
-    }, {
-      $pull: {
-        friend_requests: friendName
-      }
-    },
-    function(err, doc) {
-        if(err)
-          res.send(err);
-    });
-
-  //Send response
-  if (accept)
-    res.send("Friend Request accepted");
-  else
-    res.send("Friend Request deleted");
 
   //Todo add possibility for friendship badge here
 };
