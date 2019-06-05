@@ -99,7 +99,11 @@ function friendLimitReached(self, callback) {
     if (err) {
       res.write(err);
       worked = false;
-    } else if (user.friends.length < user.maxFriend)
+    }
+    else if(!user){
+      res.write(self+" not found");
+    }
+    else if (user.friends.length < user.maxFriend)
       callback();
   });
 }
