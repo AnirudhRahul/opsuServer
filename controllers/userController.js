@@ -13,7 +13,7 @@ exports.get_user = function(req, res) {
     if (err)
       res.status(400).send(err);
     else if (user)
-      res.send("User was added\n"+user);
+      res.send(user);
     else
       res.status(404).send('Username or password incorrect');
 
@@ -130,7 +130,10 @@ exports.delete_request = function(req, res) {
         friend_requests: friendName
       }
     },
-    function(err, doc) {});
+    function(err, doc) {
+        if(err)
+          res.send(err);
+    });
 
   //Send response
   if (accept)
