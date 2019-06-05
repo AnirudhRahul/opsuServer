@@ -91,7 +91,7 @@ function addFriend(self, friend) {
     });
 }
 
-function friendLimitReached(self, callback) {
+function friendLimitReached(res, self, callback) {
   //Add eachother to friends lists
   User.findOne({
     displayName: self
@@ -115,7 +115,7 @@ exports.delete_request = function(req, res) {
   const accept = req.query.accept == 'true';
   var worked = true;
   if (accept) {
-    friendLimitReached(self, friendLimitReached(friendName, function() {
+    friendLimitReached(res, self, friendLimitReached(res,friendName, function() {
       addFriend(self, friendName);
       addFriend(friendName, self);
       if (!worked) {
