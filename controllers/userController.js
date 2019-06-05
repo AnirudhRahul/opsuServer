@@ -108,7 +108,7 @@ function friendLimitReached(self, errored, callback) {
   });
 }
 
-function deleteFriendRequest(self, friendName) {}
+function deleteFriendRequest(self, friendName) {
 User.findOneAndUpdate({
     displayName: self
   }, {
