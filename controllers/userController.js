@@ -147,7 +147,7 @@ exports.delete_request = function(req, res) {
     Promise.all([friendLimitReached(self), friendLimitReached(friendName)])
       .then(Promise.all([addFriend(self, friendName), addFriend(friendName, self)]))
       .then(deleteFriendRequest(self, friendName)).then(
-        function(res) {
+        function(result) {
           res.send("Friend Request accepted");
         },
         function(err) {
