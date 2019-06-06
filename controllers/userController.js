@@ -85,8 +85,10 @@ var addFriend = function(self, friend) {
         }
       },
       function(err, doc) {
-        if (err)
+        if (err){
+          console.log(err);
           reject(err);
+        }
         else {
           resolve(true);
         }
@@ -100,8 +102,10 @@ function friendLimitReached(self) {
     User.findOne({
       displayName: self
     }, function(err, user) {
-      if (err)
+      if (err){
+        console.log(err);
         reject(err);
+      }
       else if (!user)
         reject(new Error('User ' + self + ' not found'));
       else if (user.friends.length >= user.maxFriend)
@@ -123,8 +127,10 @@ function deleteFriendRequest(self, friendName) {
         }
       },
       function(err, doc) {
-        if (err)
+        if (err){
+          console.log(err);
           reject(err);
+        }
         else
           resolve(true);
 
@@ -137,7 +143,6 @@ exports.delete_request = function(req, res) {
   const friendName = req.query.friendName;
   const self = req.query.displayName;
   const accept = req.query.accept == 'true';
-  var worked = true;
   if (accept) {
     Promise.all([friendLimitReached(self), friendLimitReached(friendName)])
       .then(Promise.all([addFriend(self, friendName), addFriend(friendName, self)]))
