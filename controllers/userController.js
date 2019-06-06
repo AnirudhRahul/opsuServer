@@ -151,7 +151,7 @@ exports.delete_request = function(req, res) {
           res.send("Friend Request accepted");
         },
         function(err) {
-          res.status(400).send(err);
+          res.status(400).send('Promise Rejected1\n'+err);
         }
       );
 
@@ -161,7 +161,7 @@ exports.delete_request = function(req, res) {
         res.send("Friend Request deleted");
       },
       function(err) {
-        res.status(400).send(err);
+        res.status(400).send('Promise Rejected2\n'+err);
       }
     );
   }
