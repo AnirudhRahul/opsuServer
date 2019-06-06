@@ -88,7 +88,7 @@ var addFriend = function(self, friend) {
         if (err)
           reject(err);
         else {
-          resolve();
+          resolve(true);
         }
       })
   });
@@ -107,7 +107,7 @@ function friendLimitReached(self) {
       else if (user.friends.length >= user.maxFriend)
         reject(new Error(self + ' Friend limit reached'))
       else
-        resolve();
+        resolve(true);
     })
   });
 
@@ -126,7 +126,7 @@ function deleteFriendRequest(self, friendName) {
         if (err)
           reject(err);
         else
-          resolve();
+          resolve(true);
 
       })
   });
@@ -142,7 +142,7 @@ exports.delete_request = function(req, res) {
     Promise.all([friendLimitReached(self), friendLimitReached(friendName)])
       .then(Promise.all([addFriend(self, friendName), addFriend(friendName, self)]))
       .then(deleteFriendRequest(self, friendName)).then(
-        function() {
+        function(res) {
           res.send("Friend Request accepted");
         },
         function(err) {
