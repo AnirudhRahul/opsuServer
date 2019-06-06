@@ -1,10 +1,19 @@
-var mongoose = require('mongoose');
+const nodemailer = require('nodemailer');
+const mongoose = require('mongoose');
 User = require('../models/User.js')
 
 
 //TODO implement api responeses
 
 //GET methods
+/*
+Desired behavior:
+Gets the most up to date info
+on a user
+
+Purpose:
+Help sync user information across devices
+*/
 exports.get_user = function(req, res) {
   User.findOne({
     displayName: req.query.displayName,
@@ -22,6 +31,16 @@ exports.get_user = function(req, res) {
 
 }
 
+/*
+Desired behavior:
+Returns a list of the user's
+current friend requests
+
+Purpose:
+Allow for easy access to the list of
+the users friend_requests since this field
+gets updated regularly
+*/
 exports.get_friendRequests = function(req, res) {
   User.findOne({
     displayName: req.query.displayName
@@ -36,6 +55,15 @@ exports.get_friendRequests = function(req, res) {
 
 }
 
+/*
+Desired behavior:
+Returns a list of the user's friends
+
+Purpose:
+Allow for easy access to the list of
+the users friends since this field
+gets updated regularly
+*/
 exports.get_friends = function(req, res) {
 
   User.findOne({
@@ -51,6 +79,14 @@ exports.get_friends = function(req, res) {
 
 }
 
+/*
+Desired behavior:
+Allow a user to send a friend
+request to other users
+
+Purpose:
+Let users make friends
+*/
 exports.create_request = function(req, res) {
   const friendName = req.query.friendName;
   const self = req.query.displayName;
@@ -155,6 +191,15 @@ function deleteFriend(self, friendName) {
   });
 }
 
+/*
+Desired behavior:
+Allow a user to delete or accept
+a friend request they have recieved
+
+Purpose:
+Let user get rid of unwanted request
+or accept wanted requests
+*/
 exports.delete_request = function(req, res) {
   const friendName = req.query.friendName;
   const self = req.query.displayName;
@@ -182,19 +227,28 @@ exports.delete_request = function(req, res) {
     );
   }
 
-};
+}
 
+/*
+Desired behavior:
+Given a pair of users remove them
+from eachother's friend list
+
+Purpose:
+Let user remove a friend to
+make room in his friends list
+*/
 exports.delete_friend = function(req, res) {
   const friendName = req.query.friendName;
   const self = req.query.displayName;
-  Promise.all([deleteFriend(self,friendName),deleteFriend(friendName,self)]).then(
+  Promise.all([deleteFriend(self, friendName), deleteFriend(friendName, self)]).then(
     function(result) {
-      res.send("Removed friend "+friendName);
+      res.send("Removed friend " + friendName);
     },
     function(err) {
       res.status(400).send(err);
     }
-  )
+  );
 }
 
 exports.add_user = function(req, res) {
@@ -213,3 +267,8 @@ exports.add_user = function(req, res) {
   });
 
 };
+
+exports.reset_password = function(req, res){
+
+
+}
