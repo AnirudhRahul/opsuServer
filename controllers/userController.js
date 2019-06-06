@@ -85,11 +85,10 @@ var addFriend = function(self, friend) {
         }
       },
       function(err, doc) {
-        if (err){
+        if (err) {
           console.log(err);
           reject(err);
-        }
-        else {
+        } else {
           resolve(true);
         }
       })
@@ -102,11 +101,10 @@ function friendLimitReached(self) {
     User.findOne({
       displayName: self
     }, function(err, user) {
-      if (err){
+      if (err) {
         console.log(err);
         reject(err);
-      }
-      else if (!user)
+      } else if (!user)
         reject(new Error('User ' + self + ' not found'));
       else if (user.friends.length >= user.maxFriend)
         reject(new Error(self + ' Friend limit reached'))
@@ -127,17 +125,35 @@ function deleteFriendRequest(self, friendName) {
         }
       },
       function(err, doc) {
-        if (err){
+        if (err) {
           console.log(err);
           reject(err);
-        }
-        else
+        } else
           resolve(true);
 
       })
   });
 }
 
+function deleteFriend(self, friendName) {
+  return new Promise(function(resolve, reject) {
+    User.findOneAndUpdate({
+        displayName: self
+      }, {
+        $pull: {
+          friends: friendName
+        }
+      },
+      function(err, doc) {
+        if (err) {
+          console.log(err);
+          reject(err);
+        } else
+          resolve(true);
+
+      })
+  });
+}
 
 exports.delete_request = function(req, res) {
   const friendName = req.query.friendName;
@@ -151,7 +167,7 @@ exports.delete_request = function(req, res) {
           res.send("Friend Request accepted");
         },
         function(err) {
-          res.status(400).send('Promise Rejected1\n'+err);
+          res.status(400).send(err);
         }
       );
 
@@ -161,13 +177,25 @@ exports.delete_request = function(req, res) {
         res.send("Friend Request deleted");
       },
       function(err) {
-        res.status(400).send('Promise Rejected2\n'+err);
+        res.status(400).send(err);
       }
     );
   }
 
 };
 
+exports.delete_friend = function(req, res) {
+  const friendName = req.query.friendName;
+  const self = req.query.displayName;
+  Promise.all([deleteFriend(self,friendName),deleteFriend(friendName,self)]).then(
+    function(result) {
+      res.send("Removed friend "+friendName);
+    },
+    function(err) {
+      res.status(400).send(err);
+    }
+  )
+}
 
 exports.add_user = function(req, res) {
 
