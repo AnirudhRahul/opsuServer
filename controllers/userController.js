@@ -1,7 +1,16 @@
-const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
 User = require('../models/User.js')
 
+const nodemailer = require('nodemailer');
+let transporter = nodeMailer.createTransport({
+  host: 'email-smtp.us-east-1.amazonaws.com',
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.SMTP_USERNAME,
+    pass: process.env.SMTP_PASSWORD
+  }
+});
 
 //TODO implement api responeses
 
@@ -251,6 +260,13 @@ exports.delete_friend = function(req, res) {
   );
 }
 
+/*
+Desired behavior:
+Add a new user to system
+
+Purpose:
+Allow new users to sign up
+*/
 exports.add_user = function(req, res) {
 
   var newUser = new User({
@@ -268,7 +284,19 @@ exports.add_user = function(req, res) {
 
 };
 
-exports.reset_password = function(req, res){
-
-
+exports.reset_password = function(req, res) {
+  let mailOptions = {
+    from: '"Opsu System" <opsuofficial@gmail.com>',
+    to: req.body.email,
+    subject: 'Opsu Account password reset',
+    text: 'Please use this {link} to reset your passowrd',
+    html: '<b>NodeJS Email Tutorial</b>'
+  };
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.log(error);
+    }
+    console.log('Message %s sent: %s', info.messageId, info.response);
+    res.render('index');
+  });
 }
