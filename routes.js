@@ -7,6 +7,8 @@ router.route('/user')
   .post(userController.add_user)
   .get(userController.get_user);
 
+router.route('/user/reset')
+  .post(userController.reset_password);
 
 router.route('/user/friends')
   .get(userController.get_friends);
