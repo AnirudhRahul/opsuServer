@@ -15,7 +15,8 @@ const schema = new mongoose.Schema({
   supporter: {type: Boolean, default: false},
   consecutive: {type: Number, default: 0},
   lastLogin: {type: Number, default: 0},
-  coins: {type: Number}
+  coins: {type: Number, default: 0},
+  resetKey: {type: String}
 });
 
 //Registers the model with mongoose and exports it

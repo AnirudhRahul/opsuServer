@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const random = require("randomstring");
 User = require('../models/User.js')
 
 const nodemailer = require('nodemailer');
@@ -284,7 +285,13 @@ exports.add_user = function(req, res) {
 
 };
 
+function addResetKey(displayName)
+
 exports.reset_password = function(req, res) {
+  var email = req.body.email;
+  var displayName = req.body.displayName
+  var resetKey = random.generate({length: 64, readable:true});
+  var link = 'http://'+process.env.IP_ADRESS+':'+process.env.PORT+'/'
   let mailOptions = {
     from: '"Opsu System" <opsuofficial@gmail.com>',
     to: req.body.email,
