@@ -25,8 +25,8 @@ Help sync user information across devices
 */
 exports.get_user = function(req, res) {
   User.findOne({
-    displayName: req.query.displayName,
-    password: req.query.password
+    displayName: req.body.displayName,
+    password: req.body.password
   }, function(err, user) {
     if (err)
       res.status(400).send(err);
@@ -52,7 +52,7 @@ gets updated regularly
 */
 exports.get_friendRequests = function(req, res) {
   User.findOne({
-    displayName: req.query.displayName
+    displayName: req.body.displayName
   }, 'friend_requests', function(err, user) {
     if (err)
       res.status(400).send(err);
@@ -76,7 +76,7 @@ gets updated regularly
 exports.get_friends = function(req, res) {
 
   User.findOne({
-    displayName: req.query.displayName
+    displayName: req.body.displayName
   }, 'friends', function(err, user) {
     if (err)
       res.status(400).send(err);
@@ -97,8 +97,8 @@ Purpose:
 Let users make friends
 */
 exports.create_request = function(req, res) {
-  const friendName = req.query.friendName;
-  const self = req.query.displayName;
+  const friendName = req.body.friendName;
+  const self = req.body.displayName;
 
   User.findOneAndUpdate({
       displayName: friendName
@@ -210,9 +210,9 @@ Let user get rid of unwanted request
 or accept wanted requests
 */
 exports.delete_request = function(req, res) {
-  const friendName = req.query.friendName;
-  const self = req.query.displayName;
-  const accept = req.query.accept == 'true';
+  const friendName = req.body.friendName;
+  const self = req.body.displayName;
+  const accept = req.body.accept == 'true';
   if (accept) {
     Promise.all([friendLimitReached(self), friendLimitReached(friendName)])
       .then(Promise.all([addFriend(self, friendName), addFriend(friendName, self)]))
@@ -248,8 +248,8 @@ Let user remove a friend to
 make room in his friends list
 */
 exports.delete_friend = function(req, res) {
-  const friendName = req.query.friendName;
-  const self = req.query.displayName;
+  const friendName = req.body.friendName;
+  const self = req.body.displayName;
   Promise.all([deleteFriend(self, friendName), deleteFriend(friendName, self)]).then(
     function(result) {
       res.send("Removed friend " + friendName);
@@ -289,8 +289,7 @@ exports.reset_password = function(req, res) {
     from: '"Opsu System" <opsuofficial@gmail.com>',
     to: req.body.email,
     subject: 'Opsu Account password reset',
-    text: 'Please use this {link} to reset your passowrd',
-    html: '<b>NodeJS Email Tutorial</b>'
+    text: 'If you requested a password reset for '+displayName+' please click the following link:'+link+'\nIf not please ignore this message',
   };
   transporter.sendMail(mailOptions, (err, info) => {
     if (err)
