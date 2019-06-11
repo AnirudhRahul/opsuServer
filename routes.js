@@ -7,7 +7,7 @@ router.route('/user')
   .post(userController.add_user)
   .get(userController.get_user);
 
-router.route('user/requestReset')
+router.route('/user/requestReset')
   //Requests a password reset through email
   .post(userController.request_reset);
 
