@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const fs = require('fs');
 const random = require("randomstring");
 User = require('../models/User.js')
 
@@ -335,11 +336,15 @@ exports.request_reset = function(req, res) {
 
 }
 
-const resetTemplate = require('../views/passwordReset.html');
 exports.request_page = function(req, res) {
   var displayName = req.query.displayName;
   var resetKey = req.query.resetKey;
+  fs.readFile('../views/passwordReset.html', function(err, data) {
+    if(err)
+      res.send(400,err);
+    else
+      res.send(resetTemplate.replace('$RESET_KEY', resetKey).replace('$DISPLAY_NAME', displayName));
 
-  res.send(resetTemplate.replace('$RESET_KEY', resetKey).replace('$DISPLAY_NAME', displayName));
+  });
 
 }
