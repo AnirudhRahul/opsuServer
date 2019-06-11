@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const fs = require('fs');
-const random = require("randomstring");
+const path = require('path');
+const random = require('randomstring');
 User = require('../models/User.js')
 
 const nodemailer = require('nodemailer');
