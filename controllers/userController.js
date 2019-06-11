@@ -337,7 +337,7 @@ exports.request_reset = function(req, res) {
 
 }
 
-const resetPageTemplate = fs.readFileSync('./../views/passwordReset.html');
+const resetPageTemplate = fs.readFileSync('../../views/passwordReset.html');
 
 exports.request_page = function(req, res) {
   var displayName = req.query.displayName;
