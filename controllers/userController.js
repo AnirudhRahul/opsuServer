@@ -285,25 +285,54 @@ exports.add_user = function(req, res) {
 
 };
 
-function addResetKey(displayName)
+function addResetKey(displayName, resetKey) {
+  return new Promise(function(resolve, reject) {
+    User.findOneAndUpdate({
+        displayName: displayName
+      }, {
+        $set: {
+          resetKey: resetKey
+        }
+      },
+      function(err, doc) {
+        if (err) {
+          console.log(err);
+          reject(err);
+        } else
+          resolve(true);
+
+      })
+  });
+
+}
 
 exports.request_reset = function(req, res) {
   var email = req.body.email;
   var displayName = req.body.displayName
-  var resetKey = random.generate({length: 64, readable:true});
-  var link = 'http://'+process.env.IP_ADRESS+':'+process.env.PORT+'/'
+  var resetKey = random.generate({
+    length: 64,
+    readable: true
+  });
+  var link = 'http://' + process.env.IP_ADRESS + ':' + process.env.PORT + '/'
   let mailOptions = {
     from: '"Opsu System" <opsuofficial@gmail.com>',
     to: req.body.email,
     subject: 'Opsu Account password reset',
-    text: 'If you requested a password reset for '+displayName+' please click the following link:'+link+'\nIf not please ignore this message'
+    text: 'If you requested a password reset for ' + displayName + ' please click the following link:' + link + '\nIf not please ignore this message'
   };
-  transporter.sendMail(mailOptions, (err, info) => {
-    if (err)
-      res.send(err);
-    else
-      res.send(info);
-  });
+  addResetKey.then(
+    function() {
+      transporter.sendMail(mailOptions, (err, info) => {
+        if (err)
+          res.send(err);
+        else
+          res.send(info);
+      });
+    },
+    function(err) {
+        res.send(err);
+    });
+
 }
 
 const resetTemplate = require('../views/passwordReset.html');
@@ -311,6 +340,6 @@ exports.request_page = function(req, res) {
   var displayName = req.query.displayName;
   var resetKey = req.query.resetKey;
 
-  res.send(resetTemplate.replace('$RESET_KEY',resetKey).replace('$DISPLAY_NAME',displayName));
-  
+  res.send(resetTemplate.replace('$RESET_KEY', resetKey).replace('$DISPLAY_NAME', displayName));
+
 }
