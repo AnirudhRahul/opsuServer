@@ -287,7 +287,7 @@ exports.add_user = function(req, res) {
 
 function addResetKey(displayName)
 
-exports.reset_password = function(req, res) {
+exports.request_reset = function(req, res) {
   var email = req.body.email;
   var displayName = req.body.displayName
   var resetKey = random.generate({length: 64, readable:true});
@@ -296,7 +296,7 @@ exports.reset_password = function(req, res) {
     from: '"Opsu System" <opsuofficial@gmail.com>',
     to: req.body.email,
     subject: 'Opsu Account password reset',
-    text: 'If you requested a password reset for '+displayName+' please click the following link:'+link+'\nIf not please ignore this message',
+    text: 'If you requested a password reset for '+displayName+' please click the following link:'+link+'\nIf not please ignore this message'
   };
   transporter.sendMail(mailOptions, (err, info) => {
     if (err)
@@ -304,4 +304,13 @@ exports.reset_password = function(req, res) {
     else
       res.send(info);
   });
+}
+
+const resetTemplate = require('../views/passwordReset.html');
+exports.request_page = function(req, res) {
+  var displayName = req.query.displayName;
+  var resetKey = req.query.resetKey;
+
+  res.send(resetTemplate.replace('$RESET_KEY',resetKey).replace('$DISPLAY_NAME',displayName));
+  
 }

@@ -7,7 +7,14 @@ router.route('/user')
   .post(userController.add_user)
   .get(userController.get_user);
 
+router.route('user/requestReset')
+  //Requests a password reset through email
+  .post(userController.request_reset);
+
 router.route('/user/reset')
+  //Returns the html for the password reset page
+  .get(userController.reset_password)
+  //Actually resets the password
   .post(userController.reset_password);
 
 router.route('/user/friends')
