@@ -13,7 +13,7 @@ router.route('/user/requestReset')
 
 router.route('/user/reset')
   //Returns the html for the password reset page
-  .get(userController.reset_password)
+  .get(userController.request_page)
   //Actually resets the password
   .post(userController.reset_password);
 
