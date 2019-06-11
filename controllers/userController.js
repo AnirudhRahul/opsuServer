@@ -138,6 +138,7 @@ var addFriend = function(self, friend) {
         } else {
           resolve(true);
         }
+
       })
   });
 }
@@ -331,7 +332,7 @@ exports.request_reset = function(req, res) {
       });
     },
     function(err) {
-        res.send(err);
+      res.send(err);
     });
 
 }
@@ -340,11 +341,32 @@ exports.request_page = function(req, res) {
   var displayName = req.query.displayName;
   var resetKey = req.query.resetKey;
   fs.readFile('../views/passwordReset.html', function(err, data) {
-    if(err)
-      res.send(400,err);
+    if (err)
+      res.send(400, err);
     else
       res.send(resetTemplate.replace('$RESET_KEY', resetKey).replace('$DISPLAY_NAME', displayName));
-
   });
+}
 
+exports.reset_password = function(req, res) {
+  var displayName = req.query.displayName;
+  var newPassword = req.query.password;
+  var resetKey = req.query.resetKey;
+  User.findOneAndUpdate({
+      displayName: displayName,
+      resetKey: resetKey
+    }, {
+      $set: {
+        password: newPassword
+      }
+    },
+    function(err, user) {
+      if (err)
+        res.status(400).send(err);
+      else if (user)
+        res.send('Password Reset');
+      else
+        res.status(404).send('Username or reset key incorrect');
+
+    })
 }
