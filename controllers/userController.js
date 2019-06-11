@@ -316,7 +316,7 @@ exports.request_reset = function(req, res) {
     length: 64,
     readable: true
   });
-  var link = 'http://' + process.env.IP_ADRESS + ':' + process.env.PORT + '/'
+  var link = 'http://' + process.env.IP_ADRESS + ':' + process.env.PORT + '/test/user/reset?displayName='+displayName+'&resetKey='+resetkey;
   let mailOptions = {
     from: '"Opsu System" <opsuofficial@gmail.com>',
     to: req.body.email,
