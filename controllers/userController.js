@@ -327,13 +327,13 @@ exports.request_reset = function(req, res) {
     function() {
       transporter.sendMail(mailOptions, (err, info) => {
         if (err)
-          res.send(err);
+          res.send('Mail Error:\n'+err);
         else
           res.send(info);
       });
     },
     function(err) {
-      res.send(err);
+      res.send('Server Error:\n'+err);
     });
 
 }
