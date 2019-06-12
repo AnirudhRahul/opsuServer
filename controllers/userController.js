@@ -323,7 +323,7 @@ exports.request_reset = function(req, res) {
     subject: 'Opsu Account password reset',
     text: 'If you requested a password reset for ' + displayName + ' please click the following link:' + link + '\nIf not please ignore this message'
   };
-  addResetKey.then(
+  addResetKey(displayName, resetKey).then(
     function() {
       transporter.sendMail(mailOptions, (err, info) => {
         if (err)
