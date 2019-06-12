@@ -349,9 +349,9 @@ exports.request_page = function(req, res) {
 }
 
 exports.reset_password = function(req, res) {
-  var displayName = req.query.displayName;
-  var newPassword = req.query.password;
-  var resetKey = req.query.resetKey;
+  var displayName = req.body.displayName;
+  var newPassword = req.body.password;
+  var resetKey = req.body.resetKey;
   User.findOneAndUpdate({
       displayName: displayName,
       resetKey: resetKey
