@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+sendError(err,res)const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
 const random = require('randomstring');
@@ -15,12 +15,12 @@ let transporter = nodemailer.createTransport({
   }
 });
 
-var sendError = new function(err) {
+var sendError = new function(err, res) {
   console.log(err);
   res.status(400).send(err);
 }
 
-var handlePromise = new function(err, doc) {
+var handlePromise = new function(err) {
   if (err) {
     console.log(err);
     reject(err);
@@ -129,7 +129,7 @@ exports.create_request = function(req, res) {
     },
     function(err, doc) {
       if (err)
-        sendError(err);
+        sendError(err,res);
       else if (doc)
         res.send("Friend Request sent");
       else
@@ -219,7 +219,7 @@ exports.delete_request = function(req, res) {
         function(result) {
           res.send("Friend Request accepted");
         },
-        sendError(err)
+        sendError(err,res)
       );
 
   } else {
@@ -227,7 +227,7 @@ exports.delete_request = function(req, res) {
       function() {
         res.send("Friend Request deleted");
       },
-      sendError(err)
+      sendError(err,res)
     );
   }
 
@@ -249,7 +249,7 @@ exports.delete_friend = function(req, res) {
     function(result) {
       res.send("Removed friend " + friendName);
     },
-    sendError(err)
+    sendError(err,res)
   );
 }
 
@@ -270,7 +270,7 @@ exports.add_user = function(req, res) {
 
   newUser.save({}, function(err, user) {
     if (err)
-      sendError(err);
+      sendError(err,res);
     else
       res.send(user);
   });
@@ -344,7 +344,7 @@ exports.reset_password = function(req, res) {
     },
     function(err, user) {
       if (err)
-        sendError(err);
+        sendError(err,res);
       else if (user)
         res.send('Password Reset');
       else
