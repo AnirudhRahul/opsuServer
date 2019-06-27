@@ -1,4 +1,4 @@
-sendError(err,res)const mongoose = require('mongoose');
+const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
 const random = require('randomstring');
