@@ -1,7 +1,7 @@
 const express = require('express')
 const beatmapController = require('./controllers/beatmapController.js')
 const userController = require('./controllers/userController.js')
-const userController = require('./controllers/userController.js')
+const adminController = require('./controllers/adminController.js')
 const router = express.Router()
 
 router.route('/user')
