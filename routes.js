@@ -1,6 +1,7 @@
 const express = require('express')
 const beatmapController = require('./controllers/beatmapController.js')
 const userController = require('./controllers/userController.js')
+const userController = require('./controllers/userController.js')
 const router = express.Router()
 
 router.route('/user')
@@ -29,7 +30,11 @@ router.route('/leaderboard')
   .get(beatmapController.get_leaderboard)
   .post(beatmapController.add_to_leaderboard);
 
+router.route('/admin/user')
+  .get(adminController.get_all_users);
 
+router.route('/admin/field')
+  .get(adminController.get_all_field);
 
 //TODO make a model for purchasable items
 router.route('/shop')
