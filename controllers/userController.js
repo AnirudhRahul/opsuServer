@@ -15,6 +15,23 @@ let transporter = nodemailer.createTransport({
   }
 });
 
+var sendError = new function(err) {
+  console.log(err);
+  res.status(400).send(err);
+}
+
+var handlePromise = new function(err, doc) {
+  if (err) {
+    console.log(err);
+    reject(err);
+  } else
+    resolve(true);
+}
+
+var handlePromiseError = new function(err) {
+    console.log(err);
+    reject(err);
+}
 //TODO implement api responeses
 
 //GET methods
@@ -112,7 +129,7 @@ exports.create_request = function(req, res) {
     },
     function(err, doc) {
       if (err)
-        res.status(400).send(err);
+        sendError(err);
       else if (doc)
         res.send("Friend Request sent");
       else
@@ -132,34 +149,24 @@ var addFriend = function(self, friend) {
           friends: friend
         }
       },
-      function(err, doc) {
-        if (err) {
-          console.log(err);
-          reject(err);
-        } else {
-          resolve(true);
-        }
-
-      })
+      handlePromise(err, doc));
   });
 }
 
 function friendLimitReached(self) {
   return new Promise(function(resolve, reject) {
-
     User.findOne({
       displayName: self
     }, function(err, user) {
-      if (err) {
-        console.log(err);
-        reject(err);
-      } else if (!user)
+      if (err)
+        handlePromiseError(err);
+      else if (!user)
         reject(new Error('User ' + self + ' not found'));
       else if (user.friends.length >= user.maxFriend)
-        reject(new Error(self + ' Friend limit reached'))
+        reject(new Error(self + ' Friend limit reached'));
       else
         resolve(true);
-    })
+    });
   });
 
 }
@@ -173,14 +180,8 @@ function deleteFriendRequest(self, friendName) {
           friend_requests: friendName
         }
       },
-      function(err, doc) {
-        if (err) {
-          console.log(err);
-          reject(err);
-        } else
-          resolve(true);
-
-      })
+      handlePromise(err, doc)
+    );
   });
 }
 
@@ -193,14 +194,8 @@ function deleteFriend(self, friendName) {
           friends: friendName
         }
       },
-      function(err, doc) {
-        if (err) {
-          console.log(err);
-          reject(err);
-        } else
-          resolve(true);
-
-      })
+      handlePromise(err, doc)
+    );
   });
 }
 
@@ -224,9 +219,7 @@ exports.delete_request = function(req, res) {
         function(result) {
           res.send("Friend Request accepted");
         },
-        function(err) {
-          res.status(400).send(err);
-        }
+        sendError(err)
       );
 
   } else {
@@ -234,9 +227,7 @@ exports.delete_request = function(req, res) {
       function() {
         res.send("Friend Request deleted");
       },
-      function(err) {
-        res.status(400).send(err);
-      }
+      sendError(err)
     );
   }
 
@@ -258,9 +249,7 @@ exports.delete_friend = function(req, res) {
     function(result) {
       res.send("Removed friend " + friendName);
     },
-    function(err) {
-      res.status(400).send(err);
-    }
+    sendError(err)
   );
 }
 
@@ -281,7 +270,7 @@ exports.add_user = function(req, res) {
 
   newUser.save({}, function(err, user) {
     if (err)
-      res.status(400).send(err);
+      sendError(err);
     else
       res.send(user);
   });
@@ -297,16 +286,9 @@ function addResetKey(displayName, resetKey) {
           resetKey: resetKey
         }
       },
-      function(err, doc) {
-        if (err) {
-          console.log(err);
-          reject(err);
-        } else
-          resolve(true);
-
-      })
+      handlePromise(err, doc)
+    )
   });
-
 }
 
 exports.request_reset = function(req, res) {
@@ -316,7 +298,7 @@ exports.request_reset = function(req, res) {
     length: 64,
     readable: true
   });
-  var link = 'http://' + process.env.IP_ADRESS + ':' + process.env.PORT + '/test/user/reset?displayName='+displayName+'&resetKey='+resetKey;
+  var link = 'http://' + process.env.IP_ADRESS + ':' + process.env.PORT + '/test/user/reset?displayName=' + displayName + '&resetKey=' + resetKey;
   let mailOptions = {
     from: '"Opsu System" <opsuofficial@gmail.com>',
     to: req.body.email,
@@ -327,13 +309,13 @@ exports.request_reset = function(req, res) {
     function() {
       transporter.sendMail(mailOptions, (err, info) => {
         if (err)
-          res.send('Mail Error:\n'+err);
+          res.send('Mail Error:\n' + err);
         else
           res.send(info);
       });
     },
     function(err) {
-      res.send('Server Error:\n'+err);
+      res.send('Server Error:\n' + err);
     });
 
 }
@@ -362,7 +344,7 @@ exports.reset_password = function(req, res) {
     },
     function(err, user) {
       if (err)
-        res.status(400).send(err);
+        sendError(err);
       else if (user)
         res.send('Password Reset');
       else
