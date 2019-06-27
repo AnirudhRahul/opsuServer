@@ -15,5 +15,12 @@
   "bugs": {
     "url": "https://github.com/AnirudhRahul/opsuServer/issues"
   },
-  "homepage": "https://github.com/AnirudhRahul/opsuServer#readme"
+  "homepage": "https://github.com/AnirudhRahul/opsuServer#readme",
+  "dependencies": {
+    "dotenv": "^8.0.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.6.1",
+    "nodemailer": "^6.2.1",
+    "randomstring": "^1.1.5"
+  }
 }
