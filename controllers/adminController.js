@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-User = require('../models/User.js')
-
+User = require('../models/User.js');
+const JSONStream = require('JSONStream');
 
 exports.get_all_users = function(req, res) {
 	if (req.body.admin !== process.env.ADMIN_KEY)
