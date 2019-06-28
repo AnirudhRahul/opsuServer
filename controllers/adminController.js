@@ -7,7 +7,7 @@ exports.get_all_users = function(req, res) {
 		return;
 	var stream = User.find().cursor();
 	stream.pipe(res);
-	readStream.on('end', function() {
+	stream.on('end', function() {
 		res.end();
 	});
 
@@ -18,7 +18,7 @@ exports.get_all_field = function(req, res) {
 		return;
 	var stream = User.find().cursor();
 	stream.pipe(res);
-	readStream.on('end', function() {
+	stream.on('end', function() {
 		res.end();
 	});
 
