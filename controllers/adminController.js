@@ -14,7 +14,7 @@ exports.get_all_field = function(req, res) {
 	if (req.body.admin !== process.env.ADMIN_KEY)
 		return;
 	try {
-		var cursor = User.find({}, req.body.field, {}).cursor
+		var cursor = User.find({}, req.body.field, {}).cursor();
 		cursor.pipe(JSONStream.stringify()).pipe(res.type('json'));
 	}
 	catch (err) {
