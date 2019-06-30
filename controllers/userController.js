@@ -216,7 +216,7 @@ exports.delete_request = function(req, res) {
       .then(
         Promise.all([addFriend(self, friendName), addFriend(friendName, self)])
       )
-      .then(deleteFriendRequest(self, friendName).resolve())
+      .then(deleteFriendRequest(self, friendName))
       .then(result => {
         res.send("Friend Request accepted");
       })
