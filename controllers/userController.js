@@ -220,7 +220,10 @@ exports.delete_request = function(req, res) {
       .then(result => {
         res.send("Friend Request accepted");
       })
-      .catch(err => res.status(400).send(err));
+      .catch(err => {
+        res.status(400).send(err.toString());
+        console.log(err.stack);
+      });
   } else {
     deleteFriendRequest(self, friendName).then(
       function() {
