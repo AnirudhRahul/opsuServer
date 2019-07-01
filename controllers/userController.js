@@ -218,10 +218,10 @@ exports.delete_request = function(req, res) {
   const accept = req.body.accept == "true";
   if (accept) {
     Promise.all([friendLimitReached(self), friendLimitReached(friendName)])
-      .then(
+      .then(() =>
         Promise.all([addFriend(self, friendName), addFriend(friendName, self)])
       )
-      .then(deleteFriendRequest(self, friendName))
+      .then(() => deleteFriendRequest(self, friendName))
       .then(result => {
         res.send("Friend Request accepted");
       })
