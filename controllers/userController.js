@@ -154,6 +154,14 @@ function friendLimitReached(self) {
         displayName: self
       },
       function(err, user) {
+        console.log(
+          "Name: " +
+            self +
+            "\nFriends: " +
+            user.friends.length +
+            " MaxFriends: " +
+            user.maxFriend
+        );
         if (err) {
           console.log(err);
           reject(err);
