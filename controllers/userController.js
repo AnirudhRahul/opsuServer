@@ -114,14 +114,16 @@ exports.create_request = function(req, res) {
       if (err) {
         console.log(err);
         res.status(400).send(err);
-      } else if (doc) res.send("Friend Request sent");
-      else res.status(404).send("Friend name doesn't exist");
+      } else if (doc) {
+        res.send("Friend Request sent");
+      } else {
+        res.status(404).send("Friend name doesn't exist");
+      }
     }
   );
 };
 
-var addFriend = function(self, friend) {
-  console.log("state 2");
+function addFriend(self, friend) {
   //Add eachother to friends lists
   return new Promise(function(resolve, reject) {
     User.findOneAndUpdate(
@@ -137,14 +139,15 @@ var addFriend = function(self, friend) {
         if (err) {
           console.log(err);
           reject(err);
-        } else resolve(true);
+        } else {
+          resolve(true);
+        }
       }
     );
   });
-};
+}
 
 function friendLimitReached(self) {
-  console.log("state 1");
   return new Promise(function(resolve, reject) {
     User.findOne(
       {
@@ -154,17 +157,19 @@ function friendLimitReached(self) {
         if (err) {
           console.log(err);
           reject(err);
-        } else if (!user) reject(new Error("User " + self + " not found"));
-        else if (user.friends.length >= user.maxFriend)
+        } else if (!user) {
+          reject(new Error("User " + self + " not found"));
+        } else if (user.friends.length >= user.maxFriend) {
           reject(new Error(self + " Friend limit reached"));
-        else resolve(true);
+        } else {
+          resolve(true);
+        }
       }
     );
   });
 }
 
 function deleteFriendRequest(self, friendName) {
-  console.log("state 3");
   return new Promise(function(resolve, reject) {
     User.findOneAndUpdate(
       {
@@ -179,23 +184,12 @@ function deleteFriendRequest(self, friendName) {
         if (err) {
           console.log(err);
           reject(err);
-        } else resolve(true);
+        } else {
+          resolve(true);
+        }
       }
     );
   });
-}
-
-function deleteFriend(self, friendName) {
-  User.findOneAndUpdate(
-    {
-      displayName: self
-    },
-    {
-      $pull: {
-        friends: friendName
-      }
-    }
-  ).exec();
 }
 
 /*
@@ -222,21 +216,30 @@ exports.delete_request = function(req, res) {
       })
       .catch(err => {
         res.status(400).send(err.toString());
-        console.log(err.stack);
       });
   } else {
-    deleteFriendRequest(self, friendName).then(
-      function() {
-        res.send("Friend Request deleted");
-      },
-      function(err) {
-        console.log(err);
-        res.status(400).send(err);
-      }
-    );
+    deleteFriendRequest(self, friendName)
+      .then(result => {
+        res.send("Friend Request accepted");
+      })
+      .catch(err => {
+        res.status(400).send(err.toString());
+      });
   }
 };
 
+function deleteFriend(self, friendName) {
+  return User.findOneAndUpdate(
+    {
+      displayName: self
+    },
+    {
+      $pull: {
+        friends: friendName
+      }
+    }
+  ).exec();
+}
 /*
 Desired behavior:
 Given a pair of users remove them
@@ -249,18 +252,14 @@ make room in his friends list
 exports.delete_friend = function(req, res) {
   const friendName = req.body.friendName;
   const self = req.body.displayName;
-  Promise.all([
-    deleteFriend(self, friendName),
-    deleteFriend(friendName, self)
-  ]).then(
-    function(result) {
-      res.send("Removed friend " + friendName);
-    },
-    function(err) {
+  Promise.all([deleteFriend(self, friendName), deleteFriend(friendName, self)])
+    .then(result => {
+      res.send("Friend Request accepted");
+    })
+    .catch(err => {
       console.log(err);
-      res.status(400).send(err);
-    }
-  );
+      res.status(400).send(err.toString());
+    });
 };
 
 /*
@@ -286,24 +285,16 @@ exports.add_user = function(req, res) {
 };
 
 function addResetKey(displayName, resetKey) {
-  return new Promise(function(resolve, reject) {
-    User.findOneAndUpdate(
-      {
-        displayName: displayName
-      },
-      {
-        $set: {
-          resetKey: resetKey
-        }
-      },
-      function(err) {
-        if (err) {
-          console.log(err);
-          reject(err);
-        } else resolve(true);
+  return User.findOneAndUpdate(
+    {
+      displayName: displayName
+    },
+    {
+      $set: {
+        resetKey: resetKey
       }
-    );
-  });
+    }
+  ).exec();
 }
 
 exports.request_reset = function(req, res) {
@@ -333,17 +324,19 @@ exports.request_reset = function(req, res) {
       link +
       "\nIf not please ignore this message"
   };
-  addResetKey(displayName, resetKey).then(
-    function() {
+  addResetKey(displayName, resetKey)
+    .then(function() {
       transporter.sendMail(mailOptions, (err, info) => {
-        if (err) res.send("Mail Error:\n" + err);
-        else res.send(info);
+        if (err) {
+          console.log(err);
+          res.send("Mail Error:\n" + err);
+        } else res.send(info);
       });
-    },
-    function(err) {
+    })
+    .catch(err => {
+      console.log(err);
       res.send("Server Error:\n" + err);
-    }
-  );
+    });
 };
 
 const resetPageTemplate = fs
