@@ -124,6 +124,7 @@ exports.create_request = function(req, res) {
 };
 
 function addFriend(self, friend) {
+  console.log("Called part 2");
   //Add eachother to friends lists
   return new Promise(function(resolve, reject) {
     User.findOneAndUpdate(
@@ -148,6 +149,7 @@ function addFriend(self, friend) {
 }
 
 function friendLimitReached(self) {
+  console.log("Called part 1");
   return new Promise(function(resolve, reject) {
     User.findOne(
       {
@@ -178,6 +180,7 @@ function friendLimitReached(self) {
 }
 
 function deleteFriendRequest(self, friendName) {
+  console.log("Called part 3");
   return new Promise(function(resolve, reject) {
     User.findOneAndUpdate(
       {
