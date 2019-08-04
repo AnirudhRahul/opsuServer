@@ -27,4 +27,3 @@ app.use('/test', routes);
 const httpsServer = https.createServer(credentials, app);
 
 httpsServer.listen(process.env.PORT);
-console.log('server started on: ' + port);
