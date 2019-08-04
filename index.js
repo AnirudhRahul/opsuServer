@@ -6,6 +6,10 @@ mongoose.set('useFindAndModify', false);
 const express = require('express');
 const bodyParser = require('body-parser');
 
+const privateKey  = fs.readFileSync('sslcert/key.pm', 'utf8');
+const certificate = fs.readFileSync('sslcert/cert.pm', 'utf8');
+const credentials = {key: privateKey, cert: certificate};
+
 
 app = express();
 app.use(bodyParser.json());
@@ -18,6 +22,7 @@ app.get('/', function (req, res) {
 const routes = require('./routes.js');
 app.use('/test', routes);
 
-port = process.env.PORT;
-app.listen(port);
+const httpsServer = https.createServer(credentials, app);
+
+httpsServer.listen(process.env.PORT);
 console.log('server started on: ' + port);
