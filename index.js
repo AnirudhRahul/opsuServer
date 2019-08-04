@@ -6,6 +6,7 @@ mongoose.set('useFindAndModify', false);
 const express = require('express');
 const bodyParser = require('body-parser');
 
+const fs = require('fs');
 const privateKey  = fs.readFileSync('sslcert/key.pm', 'utf8');
 const certificate = fs.readFileSync('sslcert/cert.pm', 'utf8');
 const credentials = {key: privateKey, cert: certificate};
