@@ -7,8 +7,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const fs = require('fs');
-const privateKey  = fs.readFileSync('ssl.key', 'utf8');
-const certificate = fs.readFileSync('ssl.cert', 'utf8');
+const privateKey  = fs.readFileSync(__dirname + '/ssl.key', 'utf8');
+const certificate = fs.readFileSync(__dirname + '/ssl.cert', 'utf8');
 const credentials = {key: privateKey, cert: certificate};
 
 
