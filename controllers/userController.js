@@ -433,7 +433,7 @@ exports.reject_reset = function(req, res) {
       if (err) {
         console.log(err);
         res.status(400).send(err);
-      } else if (user) res.send("Rejected reset link");
+      } else if (user) res.send("Rejected reset link 👍");
       else res.status(404).send("Username or reset key not found");
     }
   );
