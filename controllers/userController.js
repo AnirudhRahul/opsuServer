@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const fs = require("fs");
 const path = require("path");
 const random = require("randomstring");
+const resetKeyLength = 64;
 User = require("../models/User.js");
 
 const nodemailer = require("nodemailer");
@@ -312,18 +313,22 @@ exports.request_reset = function(req, res) {
   var email = req.body.email;
   var displayName = req.body.displayName;
   var resetKey = random.generate({
-    length: 64,
+    length: resetKeyLength,
     readable: true
   });
   var link =
     "http://" +
     process.env.IP_ADRESS +
-    ":" +
-    process.env.PORT +
-    "/test/user/reset?displayName=" +
+    "/user/reset?displayName=" +
     displayName +
     "&resetKey=" +
     resetKey;
+  var rejectLink =
+    "http://" +
+    process.env.IP_ADRESS +
+    "/user/rejectReset?displayName=" +
+    displayName;
+
   let mailOptions = {
     from: '"Opsu System" <opsuofficial@gmail.com>',
     to: req.body.email,
@@ -333,7 +338,8 @@ exports.request_reset = function(req, res) {
       displayName +
       " please click the following link:" +
       link +
-      "\nIf not please ignore this message"
+      "\n\nIf not please click here to reject the link:" +
+      rejectLink
   };
   addResetKey(displayName, resetKey)
     .then(function() {
@@ -369,6 +375,13 @@ exports.reset_password = function(req, res) {
   var displayName = req.body.displayName;
   var newPassword = req.body.password;
   var resetKey = req.body.resetKey;
+
+  if (!(displayName || newPassword || resetKey))
+    res.status(401).send("Missing Parameters");
+
+  if (resetKey.length != resetKeyLength)
+    res.status(401).send("Invalid Reset Key");
+
   User.findOneAndUpdate(
     {
       displayName: displayName,
@@ -376,7 +389,8 @@ exports.reset_password = function(req, res) {
     },
     {
       $set: {
-        password: newPassword
+        password: newPassword,
+        resetKey: ""
       }
     },
     function(err, user) {
@@ -385,6 +399,30 @@ exports.reset_password = function(req, res) {
         res.status(400).send(err);
       } else if (user) res.send("Password Reset");
       else res.status(404).send("Username or reset key incorrect");
+    }
+  );
+};
+
+exports.reject_reset = function(req, res) {
+  var displayName = req.body.displayName;
+
+  if (!displayName) res.status(401).send("Missing Parameters");
+
+  User.findOneAndUpdate(
+    {
+      displayName: displayName
+    },
+    {
+      $set: {
+        resetKey: ""
+      }
+    },
+    function(err, user) {
+      if (err) {
+        console.log(err);
+        res.status(400).send(err);
+      } else if (user) res.send("Rejected reset link");
+      else res.status(404).send("Username not found");
     }
   );
 };

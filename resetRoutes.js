@@ -12,5 +12,14 @@ router.route('/user/reset')
   //Actually resets the password
   .post(userController.reset_password);
 
+router.route('/user/reset')
+  //Returns the html for the password reset page
+  .get(userController.request_page)
+  //Actually resets the password
+  .post(userController.reset_password);
+
+router.route('/user/rejectReset')
+    //Rejects the users current reset key
+    .get(userController.reject_reset)
 
 module.exports = router
