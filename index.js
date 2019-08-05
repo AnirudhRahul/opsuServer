@@ -17,13 +17,18 @@ app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/', function (req, res) {
-  res.send('Server is running');
-})
+app2 = express();
+app2.use(bodyParser.json());
+app2.use(bodyParser.urlencoded({ extended: true }));
 
 const routes = require('./routes.js');
 app.use('/test', routes);
 
-const httpsServer = https.createServer(credentials, app);
+const routes2 = require('./resetRoutes.js');
+app2.use(routes2);
 
-httpsServer.listen(process.env.PORT);
+const httpsServer = https.createServer(credentials, app);
+const httpServer = http.createServer(app2);
+
+httpsServer.listen(443);
+httpServer.listen(80)
