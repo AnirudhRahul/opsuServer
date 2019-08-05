@@ -316,6 +316,7 @@ exports.request_reset = function(req, res) {
     length: resetKeyLength,
     readable: true
   });
+
   var link =
     "http://" +
     process.env.IP_ADRESS +
@@ -323,12 +324,14 @@ exports.request_reset = function(req, res) {
     displayName +
     "&resetKey=" +
     resetKey;
+
   var rejectLink =
     "http://" +
     process.env.IP_ADRESS +
     "/user/rejectReset?displayName=" +
-    displayName;
-
+    displayName +
+    "&resetKey=" +
+    resetKey;
   let mailOptions = {
     from: '"Opsu System" <opsuofficial@gmail.com>',
     to: req.body.email,
@@ -376,7 +379,7 @@ exports.reset_password = function(req, res) {
   var newPassword = req.body.password;
   var resetKey = req.body.resetKey;
 
-  if (!(displayName || newPassword || resetKey))
+  if (!(displayName && newPassword && resetKey))
     res.status(401).send("Missing Parameters");
 
   if (resetKey.length != resetKeyLength)
@@ -404,13 +407,15 @@ exports.reset_password = function(req, res) {
 };
 
 exports.reject_reset = function(req, res) {
-  var displayName = req.body.displayName;
+  var displayName = req.displayName;
+  var resetKey = req.resetKey;
 
-  if (!displayName) res.status(401).send("Missing Parameters");
+  if (!(displayName && resetKey)) res.status(401).send("Missing Parameters");
 
   User.findOneAndUpdate(
     {
-      displayName: displayName
+      displayName: displayName,
+      resetKey: resetKey
     },
     {
       $set: {
@@ -422,7 +427,7 @@ exports.reject_reset = function(req, res) {
         console.log(err);
         res.status(400).send(err);
       } else if (user) res.send("Rejected reset link");
-      else res.status(404).send("Username not found");
+      else res.status(404).send("Username or reset key not found");
     }
   );
 };
