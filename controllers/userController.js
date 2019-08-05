@@ -411,8 +411,8 @@ exports.reset_password = function(req, res) {
 };
 
 exports.reject_reset = function(req, res) {
-  var displayName = req.displayName;
-  var resetKey = req.resetKey;
+  var displayName = req.query.displayName;
+  var resetKey = req.query.resetKey;
 
   if (!(displayName && resetKey)) {
     res.status(401).send("Missing Parameters");

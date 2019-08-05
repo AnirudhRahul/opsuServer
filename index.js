@@ -31,5 +31,5 @@ app2.use(routes2);
 const httpsServer = https.createServer(credentials, app);
 const httpServer = http.createServer(app2);
 
-httpsServer.listen(443);
+httpsServer.listen(process.env.PORT);
 httpServer.listen(80)
