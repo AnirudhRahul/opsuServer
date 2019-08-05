@@ -379,11 +379,15 @@ exports.reset_password = function(req, res) {
   var newPassword = req.body.password;
   var resetKey = req.body.resetKey;
 
-  if (!(displayName && newPassword && resetKey))
+  if (!(displayName && newPassword && resetKey)) {
     res.status(401).send("Missing Parameters");
+    return;
+  }
 
-  if (resetKey.length != resetKeyLength)
+  if (resetKey.length != resetKeyLength) {
     res.status(401).send("Invalid Reset Key");
+    return;
+  }
 
   User.findOneAndUpdate(
     {
@@ -410,7 +414,10 @@ exports.reject_reset = function(req, res) {
   var displayName = req.displayName;
   var resetKey = req.resetKey;
 
-  if (!(displayName && resetKey)) res.status(401).send("Missing Parameters");
+  if (!(displayName && resetKey)) {
+    res.status(401).send("Missing Parameters");
+    return;
+  }
 
   User.findOneAndUpdate(
     {
