@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const fs = require("fs");
-var minify = require('html-minifier').minify;
-
+var minify = require("html-minifier").minify;
 
 const path = require("path");
 const random = require("randomstring");
@@ -277,22 +276,29 @@ exports.delete_friend = function(req, res) {
     });
 };
 
-
-
-function resetLink(displayName, resetKey){
-    return  "http://" +
-            process.env.IP_ADRESS +"/user/reset?"
-            + "displayName=" + displayName
-            + "&resetKey="   + resetKey;
+function resetLink(displayName, resetKey) {
+  return (
+    "http://" +
+    process.env.IP_ADRESS +
+    "/user/reset?" +
+    "displayName=" +
+    displayName +
+    "&resetKey=" +
+    resetKey
+  );
 }
 
-function rejectLink(displayName, resetKey){
-  return "http://" +
-  process.env.IP_ADRESS + "/user/rejectReset?"
-  + "displayName=" + displayName
-  + "&resetKey=" + resetKey  ;
+function rejectLink(displayName, resetKey) {
+  return (
+    "http://" +
+    process.env.IP_ADRESS +
+    "/user/rejectReset?" +
+    "displayName=" +
+    displayName +
+    "&resetKey=" +
+    resetKey
+  );
 }
-
 
 function addResetKey(displayName, resetKey) {
   return User.findOneAndUpdate(
@@ -311,26 +317,24 @@ function createUser(displayName, email) {
   var newUser = new User({
     displayName: displayName,
     email: email,
-    password:""
-  })
+    password: ""
+  });
 
-  return newUser.save({}, function(err, user) {
-    if(err){
-      console.log(err);
-      res.status(400).send(err);
-    }
-    else {
-      res.send(user);
-    }
-  }).exec();
-
-
+  return newUser
+    .save({}, function(err, user) {
+      if (err) {
+        console.log(err);
+        res.status(400).send(err);
+      } else {
+        res.send(user);
+      }
+    })
+    .exec();
 }
 
-const createPageTemplate = (fs
+const createPageTemplate = fs
   .readFileSync(path.resolve(__dirname, "./../views/passwordCreation.html"))
-  .toString());
-
+  .toString();
 
 /*
 Desired behavior:
@@ -340,11 +344,10 @@ Purpose:
 Allow new users to sign up
 */
 exports.add_user = function(req, res) {
-
   const displayName = req.body.displayName;
   const email = req.body.email;
 
-  if (!(displayName&&email)) {
+  if (!(displayName && email)) {
     res.status(401).send("Missing Parameters");
     return;
   }
@@ -355,7 +358,6 @@ exports.add_user = function(req, res) {
   });
   const link = resetLink(displayName, resetKey);
 
-
   let mailOptions = {
     from: '"Opsu System" <opsuofficial@gmail.com>',
     to: email,
@@ -363,11 +365,10 @@ exports.add_user = function(req, res) {
     text: createPageTemplate
       .replace("{{name}}", displayName)
       .replace("{{action_url}}", link)
-
   };
 
   createUser(displayName, email)
-  .then(()=>addResetKey(displayName, resetKey))
+    .then(() => addResetKey(displayName, resetKey))
     .then(function() {
       transporter.sendMail(mailOptions, (err, info) => {
         if (err) {
@@ -382,8 +383,6 @@ exports.add_user = function(req, res) {
     });
 };
 
-
-
 exports.request_reset = function(req, res) {
   var email = req.body.email;
   var displayName = req.body.displayName;
@@ -394,7 +393,6 @@ exports.request_reset = function(req, res) {
 
   const link = resetLink(displayName, resetKey);
   const rejectLink = rejectLink(displayName, resetKey);
-
 
   let mailOptions = {
     from: '"Opsu System" <opsuofficial@gmail.com>',
@@ -423,10 +421,9 @@ exports.request_reset = function(req, res) {
     });
 };
 
-const resetPageTemplate = (fs
+const resetPageTemplate = fs
   .readFileSync(path.resolve(__dirname, "./../views/passwordReset.html"))
-  .toString());
-
+  .toString();
 
 exports.request_page = function(req, res) {
   var displayName = req.query.displayName;
