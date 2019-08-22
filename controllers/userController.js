@@ -308,7 +308,7 @@ function addResetKey(displayName, resetKey) {
 }
 
 
-const createPageTemplate = minify(fs
+const createPageTemplate = (fs
   .readFileSync(path.resolve(__dirname, "./../views/passwordCreation.html"))
   .toString());
 
@@ -414,7 +414,7 @@ exports.request_reset = function(req, res) {
     });
 };
 
-const resetPageTemplate = minify(fs
+const resetPageTemplate = (fs
   .readFileSync(path.resolve(__dirname, "./../views/passwordReset.html"))
   .toString());
 
