@@ -327,9 +327,11 @@ function createUser(displayName, email) {
   return newUser.save();
 }
 
-const createPageTemplate = fs
-  .readFileSync(path.resolve(__dirname, "./../views/passwordCreation.html"))
-  .toString();
+const createPageTemplate = minify(
+  fs
+    .readFileSync(path.resolve(__dirname, "./../views/passwordCreation.html"))
+    .toString()
+);
 
 /*
 Desired behavior:
