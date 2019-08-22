@@ -324,9 +324,6 @@ function createUser(displayName, email) {
     .save({}, function(err, user) {
       if (err) {
         console.log(err);
-        res.status(400).send(err);
-      } else {
-        res.send(user);
       }
     })
     .exec();
