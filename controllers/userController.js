@@ -317,7 +317,7 @@ function createUser(displayName, email) {
   var newUser = new User({
     displayName: displayName,
     email: email,
-    password: ""
+    password: "null"
   });
 
   return newUser.save();
