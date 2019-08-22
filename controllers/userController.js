@@ -307,6 +307,25 @@ function addResetKey(displayName, resetKey) {
   ).exec();
 }
 
+function createUser(displayName, email) {
+  var newUser = new User({
+    displayName: displayName,
+    email: email,
+    password:""
+  })
+
+  return newUser.save({}, function(err, user) {
+    if(err){
+      console.log(err);
+      res.status(400).send(err);
+    }
+    else {
+      res.send(user);
+    }
+  }).exec();
+
+
+}
 
 const createPageTemplate = (fs
   .readFileSync(path.resolve(__dirname, "./../views/passwordCreation.html"))
@@ -347,7 +366,8 @@ exports.add_user = function(req, res) {
 
   };
 
-  addResetKey(displayName, resetKey)
+  createUser(displayName, email)
+  .then(()=>addResetKey(displayName, resetKey))
     .then(function() {
       transporter.sendMail(mailOptions, (err, info) => {
         if (err) {
@@ -372,21 +392,10 @@ exports.request_reset = function(req, res) {
     readable: true
   });
 
-  var link =
-    "http://" +
-    process.env.IP_ADRESS +
-    "/user/reset?displayName=" +
-    displayName +
-    "&resetKey=" +
-    resetKey;
+  const link = resetLink(displayName, resetKey);
+  const rejectLink = rejectLink(displayName, resetKey);
 
-  var rejectLink =
-    "http://" +
-    process.env.IP_ADRESS +
-    "/user/rejectReset?displayName=" +
-    displayName +
-    "&resetKey=" +
-    resetKey;
+
   let mailOptions = {
     from: '"Opsu System" <opsuofficial@gmail.com>',
     to: req.body.email,
