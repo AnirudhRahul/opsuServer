@@ -321,11 +321,7 @@ function createUser(displayName, email) {
   });
 
   return newUser
-    .save({}, function(err, user) {
-      if (err) {
-        console.log(err);
-      }
-    })
+    .save()
     .exec();
 }
 
