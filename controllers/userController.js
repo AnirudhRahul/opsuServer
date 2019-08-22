@@ -283,8 +283,7 @@ function resetLink(displayName, resetKey){
     return  "http://" +
             process.env.IP_ADRESS +"/user/reset?"
             + "displayName=" + displayName
-            + "&resetKey="   + resetKey
-            + "&email="   + email;
+            + "&resetKey="   + resetKey;
 }
 
 function rejectLink(displayName, resetKey){
