@@ -357,7 +357,7 @@ exports.add_user = function(req, res) {
     from: '"Opsu System" <opsuofficial@gmail.com>',
     to: email,
     subject: "Opsu Account Creation",
-    text: createPageTemplate
+    html: createPageTemplate
       .replace("{{name}}", displayName)
       .replace("{{action_url}}", link)
   };
