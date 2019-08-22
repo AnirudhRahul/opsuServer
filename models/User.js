@@ -6,7 +6,7 @@ var conn = mongoose.createConnection("mongodb://localhost:27017/opsu_Users", {
 //Add session keys for better security and synchronisation
 
 const schema = new mongoose.Schema({
-	email: {type: String, required: true},
+	email: {type: String, required: true, unique: true},
 	password: {type: String, required: true},
 	displayName: {type: String, index: true, unique: true, required: true},
 	score: {type: Number, default: 0},
@@ -21,6 +21,7 @@ const schema = new mongoose.Schema({
 	lastLogin: {type: Number, default: 0},
 	coins: {type: Number, default: 0},
 	resetKey: {type: String}
+
 });
 
 //Registers the model with mongoose and exports it

@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
 const fs = require("fs");
+var minify = require('html-minifier').minify;
+
+
 const path = require("path");
 const random = require("randomstring");
 const resetKeyLength = 64;
@@ -274,27 +277,23 @@ exports.delete_friend = function(req, res) {
     });
 };
 
-/*
-Desired behavior:
-Add a new user to system
 
-Purpose:
-Allow new users to sign up
-*/
-exports.add_user = function(req, res) {
-  var newUser = new User({
-    displayName: req.body.displayName,
-    email: req.body.email,
-    password: req.body.password
-  });
 
-  newUser.save({}, function(err, user) {
-    if (err) {
-      console.log(err);
-      res.status(400).send(err);
-    } else res.send(user);
-  });
-};
+function resetLink(displayName, resetKey){
+    return  "http://" +
+            process.env.IP_ADRESS +"/user/reset?"
+            + "displayName=" + displayName
+            + "&resetKey="   + resetKey
+            + "&email="   + email;
+}
+
+function rejectLink(displayName, resetKey){
+  return "http://" +
+  process.env.IP_ADRESS + "/user/rejectReset?"
+  + "displayName=" + displayName
+  + "&resetKey=" + resetKey  ;
+}
+
 
 function addResetKey(displayName, resetKey) {
   return User.findOneAndUpdate(
@@ -308,6 +307,63 @@ function addResetKey(displayName, resetKey) {
     }
   ).exec();
 }
+
+
+const createPageTemplate = minify(fs
+  .readFileSync(path.resolve(__dirname, "./../views/passwordCreation.html"))
+  .toString());
+
+
+/*
+Desired behavior:
+Add a new user to system
+
+Purpose:
+Allow new users to sign up
+*/
+exports.add_user = function(req, res) {
+
+  const displayName = req.body.displayName;
+  const email = req.body.email;
+
+  if (!(displayName&&email)) {
+    res.status(401).send("Missing Parameters");
+    return;
+  }
+
+  const resetKey = random.generate({
+    length: resetKeyLength,
+    readable: true
+  });
+  const link = resetLink(displayName, resetKey);
+
+
+  let mailOptions = {
+    from: '"Opsu System" <opsuofficial@gmail.com>',
+    to: email,
+    subject: "Opsu Account Creation",
+    text: createPageTemplate
+      .replace("{{name}}", displayName)
+      .replace("{{action_url}}", link)
+
+  };
+
+  addResetKey(displayName, resetKey)
+    .then(function() {
+      transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+          console.log(err);
+          res.send("Mail Error:\n" + err);
+        } else res.send(info);
+      });
+    })
+    .catch(err => {
+      console.log(err);
+      res.send("Server Error:\n" + err);
+    });
+};
+
+
 
 exports.request_reset = function(req, res) {
   var email = req.body.email;
@@ -339,9 +395,9 @@ exports.request_reset = function(req, res) {
     text:
       "If you requested a password reset for " +
       displayName +
-      " please click the following link:" +
+      " please click the following link:\n" +
       link +
-      "\n\nIf not please click here to reject the link:" +
+      "\n\nIf not please click here to reject the link:\n" +
       rejectLink
   };
   addResetKey(displayName, resetKey)
@@ -359,9 +415,10 @@ exports.request_reset = function(req, res) {
     });
 };
 
-const resetPageTemplate = fs
+const resetPageTemplate = minify(fs
   .readFileSync(path.resolve(__dirname, "./../views/passwordReset.html"))
-  .toString();
+  .toString());
+
 
 exports.request_page = function(req, res) {
   var displayName = req.query.displayName;
@@ -369,8 +426,8 @@ exports.request_page = function(req, res) {
 
   res.send(
     resetPageTemplate
-      .replace("$RESET_KEY", resetKey)
-      .replace("$DISPLAY_NAME", displayName)
+      .replace("{{RESET_KEY}}", resetKey)
+      .replace("{{DISPLAY_NAME}}", displayName)
   );
 };
 
