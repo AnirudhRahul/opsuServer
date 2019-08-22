@@ -320,10 +320,8 @@ function createUser(displayName, email) {
     password: ""
   });
 
-  return newUser
-    .save()
-    .exec();
-}
+  return newUser.save();
+  }
 
 const createPageTemplate = fs
   .readFileSync(path.resolve(__dirname, "./../views/passwordCreation.html"))
