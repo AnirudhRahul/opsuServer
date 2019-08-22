@@ -30,19 +30,23 @@ Purpose:
 Help sync user information across devices
 */
 exports.get_user = function(req, res) {
-  User.findOne(
-    {
-      displayName: req.body.displayName,
-      password: req.body.password
-    },
-    function(err, user) {
-      if (err) res.status(400).send(err);
-      else if (user) res.send(user);
-      else res.status(404).send("Username or password incorrect");
+  if (req.body.password && req.body.password.length > 4) {
+    User.findOne(
+      {
+        displayName: req.body.displayName,
+        password: req.body.password
+      },
+      function(err, user) {
+        if (err) res.status(400).send(err);
+        else if (user) res.send(user);
+        else res.status(404).send("Username or password incorrect");
 
-      console.log("End reached");
-    }
-  );
+        console.log("End reached");
+      }
+    );
+  } else {
+    res.send("Invalid format");
+  }
 };
 
 /*
@@ -321,7 +325,7 @@ function createUser(displayName, email) {
   });
 
   return newUser.save();
-  }
+}
 
 const createPageTemplate = fs
   .readFileSync(path.resolve(__dirname, "./../views/passwordCreation.html"))
