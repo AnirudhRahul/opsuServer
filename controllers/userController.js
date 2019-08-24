@@ -362,6 +362,9 @@ exports.add_user = function(req, res) {
     html: createPageTemplate
       .replace("{{name}}", displayName)
       .replace("{{action_url}}", link)
+      .replace("{{action_url}}", link)
+      .replace("{{action_url}}", link)
+
   };
 
   createUser(displayName, email)
