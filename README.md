@@ -1,7 +1,9 @@
 # opsuServer
 This repository will contain all the backend server code used by the Opsu! app.
 
-#Installation
+# Installation
+
+
 Clone the repo, and the run npm install to install all the dependencies needed.
 
 Create a .env file to specify the PORT variable
