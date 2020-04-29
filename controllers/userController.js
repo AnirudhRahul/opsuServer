@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const fs = require("fs");
-var minify = require("html-minifier").minify;
 
 const path = require("path");
 const random = require("randomstring");
